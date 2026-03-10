@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trade Show Checklist Generator — Free Pre-Show Timeline</title>
+  <meta name="description" content="Generate a time-based trade show preparation checklist. Enter your show date and get a complete countdown task list from 6 months out to show day.">
+  <meta name="keywords" content="trade show checklist, exhibition preparation checklist, pre-show timeline, trade show planning template, event checklist generator">
+  <link rel="canonical" href="https://lensmorofficial.github.io/trade-show-tools/checklist-generator/">
+  <meta property="og:title" content="Trade Show Checklist Generator — Free Pre-Show Timeline">
+  <meta property="og:description" content="Generate a complete trade show preparation checklist with deadlines. Free, no signup required.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://lensmorofficial.github.io/trade-show-tools/checklist-generator/">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Trade Show Checklist Generator",
+    "description": "Generate a time-based trade show preparation checklist with deadlines from 6 months out to show day.",
+    "url": "https://lensmorofficial.github.io/trade-show-tools/checklist-generator/",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "Lensmor", "url": "https://www.lensmor.com" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #6b75ff;
+      --primary-hover: #8189ff;
+      --green: #34d399;
+      --red: #f87171;
+      --amber: #fbbf24;
+      --bg: #0c0c12;
+      --bg-card: #1a1a24;
+      --bg-input: #0c0c12;
+      --stroke: #1f2033;
+      --text: #ffffff;
+      --text-secondary: #a7a7a8;
+      --text-dim: #6b6b6c;
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
+
+    body {
+      font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      letter-spacing: -0.015em;
+      min-height: 100vh;
+    }
+
+    .container { max-width: 800px; margin: 0 auto; padding: 2.5rem 1.25rem; }
+
+    header { text-align: center; margin-bottom: 2.5rem; }
+    header h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.15; }
+    header p { color: var(--text-secondary); font-size: 1rem; }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card h2 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--stroke);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.5rem; }
+    }
+
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { font-size: 0.875rem; font-weight: 500; color: var(--text); margin-bottom: 0.2rem; }
+    .form-group .hint { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.4rem; }
+
+    input[type="date"], input[type="text"], select {
+      width: 100%;
+      padding: 0.625rem 0.75rem;
+      background: var(--bg-input);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+      letter-spacing: -0.015em;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+    select { cursor: pointer; }
+    select option { background: var(--bg-card); color: var(--text); }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(107, 117, 255, 0.15);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 0.75rem 1.5rem;
+      background: var(--primary);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: -0.015em;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 0.5rem;
+    }
+
+    .btn:hover { background: var(--primary-hover); }
+    .btn:active { transform: scale(0.99); }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--stroke);
+      color: var(--text-secondary);
+      margin-top: 1rem;
+    }
+
+    .btn-outline:hover { border-color: var(--primary); color: var(--text); background: transparent; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      font-weight: 400;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .btn-secondary:hover { color: var(--text-secondary); background: rgba(255,255,255,0.03); }
+
+    /* Results */
+    #results { display: none; }
+    #results.visible { display: block; }
+
+    .countdown {
+      text-align: center;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: var(--bg);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+    }
+
+    .countdown .days-left {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .countdown .days-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-dim);
+    }
+
+    .countdown.urgent .days-left { color: var(--red); }
+    .countdown.soon .days-left { color: var(--amber); }
+
+    .phase {
+      margin-bottom: 1.5rem;
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+    }
+
+    .phase-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .phase-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .phase-date {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .phase-status {
+      font-size: 0.625rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+      font-weight: 600;
+    }
+
+    .status-overdue { background: rgba(248, 113, 113, 0.15); color: var(--red); }
+    .status-current { background: rgba(251, 191, 36, 0.12); color: var(--amber); }
+    .status-upcoming { background: rgba(107, 117, 255, 0.1); color: var(--primary); }
+    .status-done { background: rgba(52, 211, 153, 0.12); color: var(--green); }
+
+    .task-list {
+      list-style: none;
+      padding-left: 1.25rem;
+      border-left: 1px solid var(--stroke);
+      margin-left: 4px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 0.4rem 0;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .task-check {
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--stroke);
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .task-check:hover { border-color: var(--primary); }
+
+    .task-check.checked {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .task-check.checked::after {
+      content: '';
+      width: 8px;
+      height: 5px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg);
+      margin-top: -2px;
+    }
+
+    .task-item.checked-task .task-text {
+      text-decoration: line-through;
+      color: var(--text-dim);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--stroke);
+    }
+
+    footer p { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; }
+    footer a { color: var(--primary); text-decoration: none; transition: color 0.15s; }
+    footer a:hover { color: var(--primary-hover); }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1.25rem;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .back-link:hover { color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../" class="back-link">&larr; All Tools</a>
+
+    <header>
+      <h1>Trade Show Checklist Generator</h1>
+      <p>Get a complete preparation timeline with tasks and deadlines based on your show date.</p>
+    </header>
+
+    <div class="card">
+      <h2>Show Details</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="showDate">Show Start Date</label>
+          <div class="hint">First day of the exhibition</div>
+          <input type="date" id="showDate">
+        </div>
+        <div class="form-group">
+          <label for="showName">Show Name (optional)</label>
+          <div class="hint">For your reference</div>
+          <input type="text" id="showName" placeholder="e.g. MEDICA 2026">
+        </div>
+        <div class="form-group">
+          <label for="exhibitorType">Exhibitor Type</label>
+          <div class="hint">Affects task complexity</div>
+          <select id="exhibitorType">
+            <option value="first">First-time Exhibitor</option>
+            <option value="returning" selected>Returning Exhibitor</option>
+            <option value="large">Large / Island Booth</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="focus">Primary Goal</label>
+          <div class="hint">Prioritizes certain tasks</div>
+          <select id="focus">
+            <option value="leads" selected>Lead Generation</option>
+            <option value="brand">Brand Awareness</option>
+            <option value="launch">Product Launch</option>
+            <option value="network">Networking / Partnerships</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" onclick="generate()">Generate Checklist</button>
+    <button class="btn btn-secondary" onclick="resetForm()">Reset</button>
+
+    <div id="results">
+      <div class="card">
+        <div class="countdown" id="countdown"></div>
+        <div id="timeline"></div>
+        <button class="btn btn-outline" onclick="copyText()">Copy as Text</button>
+      </div>
+    </div>
+
+    <footer>
+      <p>
+        Built by <a href="https://www.lensmor.com/?utm_source=github&utm_medium=tool&utm_campaign=checklist-generator" target="_blank" rel="noopener">Lensmor</a> &mdash; AI-powered trade show intelligence for B2B teams.
+      </p>
+      <p>
+        <a href="https://github.com/LensmorOfficial/trade-show-tools" target="_blank" rel="noopener">View on GitHub</a>
+        &middot;
+        <a href="../roi-calculator/">ROI Calculator</a>
+        &middot;
+        <a href="../budget-planner/">Budget Planner</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // Set default date to 3 months from now
+    var d = new Date();
+    d.setMonth(d.getMonth() + 3);
+    document.getElementById('showDate').value = d.toISOString().split('T')[0];
+
+    var phaseColors = ['#f87171','#fb923c','#fbbf24','#34d399','#38bdf8','#6b75ff','#a78bfa'];
+
+    function getDaysBetween(a, b) {
+      return Math.round((b - a) / (1000 * 60 * 60 * 24));
+    }
+
+    function fmtDate(d) {
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function getPhases(showDate, type, focus) {
+      var phases = [
+        {
+          offset: -180, name: '6 Months Before', tasks: [
+            'Set exhibition goals and KPIs',
+            'Research and select trade show',
+            'Submit booth space application',
+            'Set preliminary budget',
+            'Assemble internal project team'
+          ]
+        },
+        {
+          offset: -120, name: '4 Months Before', tasks: [
+            'Finalize booth design concept',
+            'Book travel and accommodation',
+            'Begin pre-show marketing campaign planning',
+            'Order booth construction or rental',
+            'Identify target attendees and exhibitors to meet'
+          ]
+        },
+        {
+          offset: -90, name: '3 Months Before', tasks: [
+            'Finalize booth graphics and signage',
+            'Order marketing collateral and giveaways',
+            'Set up lead capture system (app, scanner, forms)',
+            'Create pre-show email outreach sequences',
+            'Register team for exhibitor badges'
+          ]
+        },
+        {
+          offset: -60, name: '2 Months Before', tasks: [
+            'Launch pre-show email campaign to prospects',
+            'Schedule meetings with key attendees',
+            'Brief sales team on booth talking points',
+            'Finalize shipping and logistics for booth materials',
+            'Test all technology (demos, screens, Wi-Fi hotspot)'
+          ]
+        },
+        {
+          offset: -30, name: '1 Month Before', tasks: [
+            'Confirm all hotel and travel bookings',
+            'Run through booth setup rehearsal',
+            'Prepare lead scoring criteria',
+            'Create social media content calendar for event',
+            'Print final attendee and meeting schedule'
+          ]
+        },
+        {
+          offset: -7, name: '1 Week Before', tasks: [
+            'Ship booth materials (confirm tracking)',
+            'Send final reminder emails to scheduled meetings',
+            'Charge all devices and pack backup equipment',
+            'Prepare team daily schedule and role assignments',
+            'Review competitor exhibitor list and booth locations'
+          ]
+        },
+        {
+          offset: 0, name: 'Show Day', tasks: [
+            'Arrive early for booth setup and testing',
+            'Team huddle: review goals and talking points',
+            'Capture leads consistently throughout the day',
+            'Post live updates on social media',
+            'Debrief team at end of each day'
+          ]
+        }
+      ];
+
+      // Add type-specific tasks
+      if (type === 'first') {
+        phases[0].tasks.push('Visit the show as an attendee first (if possible)');
+        phases[1].tasks.push('Hire experienced booth staff or agency');
+        phases[2].tasks.push('Create a first-timer orientation guide for team');
+      }
+      if (type === 'large') {
+        phases[0].tasks.push('Engage exhibition design agency');
+        phases[1].tasks.push('Plan in-booth activities (demos, presentations, lounge)');
+        phases[2].tasks.push('Coordinate AV equipment and staging requirements');
+        phases[3].tasks.push('Arrange catering for in-booth hospitality');
+      }
+
+      // Add focus-specific tasks
+      if (focus === 'leads') {
+        phases[2].tasks.push('Set up CRM integration for real-time lead sync');
+        phases[4].tasks.push('Prepare post-show follow-up email sequences');
+        phases[6].tasks.push('Qualify and tag leads by priority before leaving venue');
+      }
+      if (focus === 'brand') {
+        phases[1].tasks.push('Design eye-catching booth activation or photo opportunity');
+        phases[3].tasks.push('Pitch press releases to industry media');
+        phases[4].tasks.push('Prepare branded merchandise and premium giveaways');
+      }
+      if (focus === 'launch') {
+        phases[1].tasks.push('Prepare product demo and launch presentation');
+        phases[3].tasks.push('Schedule press briefings and analyst meetings');
+        phases[4].tasks.push('Create launch-specific landing page and QR codes');
+        phases[5].tasks.push('Embargo check: align press release timing with show schedule');
+      }
+      if (focus === 'network') {
+        phases[2].tasks.push('Research key attendees on LinkedIn and plan outreach');
+        phases[3].tasks.push('RSVP to exhibitor dinners and networking events');
+        phases[4].tasks.push('Prepare one-pager for potential partners');
+      }
+
+      return phases;
+    }
+
+    function generate() {
+      var showDateStr = document.getElementById('showDate').value;
+      if (!showDateStr) return;
+
+      var showDate = new Date(showDateStr + 'T00:00:00');
+      var showName = document.getElementById('showName').value || 'Your Trade Show';
+      var type = document.getElementById('exhibitorType').value;
+      var focus = document.getElementById('focus').value;
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      var daysLeft = getDaysBetween(today, showDate);
+
+      // Countdown
+      var cdClass = 'countdown';
+      if (daysLeft < 0) cdClass += ' urgent';
+      else if (daysLeft <= 14) cdClass += ' urgent';
+      else if (daysLeft <= 30) cdClass += ' soon';
+
+      var cdText = '';
+      if (daysLeft < 0) {
+        cdText = '<div class="days-left">' + Math.abs(daysLeft) + ' days ago</div>';
+      } else if (daysLeft === 0) {
+        cdText = '<div class="days-left">Today!</div>';
+      } else {
+        cdText = '<div class="days-left">' + daysLeft + ' days</div>';
+      }
+      cdText += '<div class="days-label">until ' + showName + ' &mdash; ' + fmtDate(showDate) + '</div>';
+      document.getElementById('countdown').className = cdClass;
+      document.getElementById('countdown').innerHTML = cdText;
+
+      // Timeline
+      var phases = getPhases(showDate, type, focus);
+      var html = '';
+
+      for (var i = 0; i < phases.length; i++) {
+        var p = phases[i];
+        var phaseDate = new Date(showDate);
+        phaseDate.setDate(phaseDate.getDate() + p.offset);
+
+        var nextPhaseDate = i < phases.length - 1 ? new Date(showDate) : showDate;
+        if (i < phases.length - 1) nextPhaseDate.setDate(nextPhaseDate.getDate() + phases[i + 1].offset);
+
+        var status = '';
+        var statusClass = '';
+        if (today >= nextPhaseDate && i < phases.length - 1) {
+          status = 'Done';
+          statusClass = 'status-done';
+        } else if (today >= phaseDate && today < nextPhaseDate) {
+          status = 'Current';
+          statusClass = 'status-current';
+        } else if (today < phaseDate) {
+          status = 'Upcoming';
+          statusClass = 'status-upcoming';
+        } else {
+          status = 'Overdue';
+          statusClass = 'status-overdue';
+        }
+
+        html += '<div class="phase">';
+        html += '<div class="phase-header">';
+        html += '<div class="phase-dot" style="background:' + phaseColors[i] + '"></div>';
+        html += '<span class="phase-title">' + p.name + '</span>';
+        html += '<span class="phase-date">' + fmtDate(phaseDate) + '</span>';
+        html += '<span class="phase-status ' + statusClass + '">' + status + '</span>';
+        html += '</div>';
+        html += '<ul class="task-list">';
+
+        for (var j = 0; j < p.tasks.length; j++) {
+          html += '<li class="task-item" onclick="toggleTask(this)">';
+          html += '<div class="task-check"></div>';
+          html += '<span class="task-text">' + p.tasks[j] + '</span>';
+          html += '</li>';
+        }
+
+        html += '</ul></div>';
+      }
+
+      document.getElementById('timeline').innerHTML = html;
+
+      var results = document.getElementById('results');
+      results.style.display = 'block';
+      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function toggleTask(el) {
+      var check = el.querySelector('.task-check');
+      check.classList.toggle('checked');
+      el.classList.toggle('checked-task');
+    }
+
+    function copyText() {
+      var showName = document.getElementById('showName').value || 'Trade Show';
+      var showDate = document.getElementById('showDate').value;
+      var type = document.getElementById('exhibitorType').value;
+      var focus = document.getElementById('focus').value;
+      var sd = new Date(showDate + 'T00:00:00');
+      var phases = getPhases(sd, type, focus);
+
+      var text = showName + ' Preparation Checklist\n';
+      text += 'Show Date: ' + fmtDate(sd) + '\n';
+      text += '='.repeat(40) + '\n\n';
+
+      for (var i = 0; i < phases.length; i++) {
+        var p = phases[i];
+        var phaseDate = new Date(sd);
+        phaseDate.setDate(phaseDate.getDate() + p.offset);
+        text += p.name + ' (' + fmtDate(phaseDate) + ')\n';
+        for (var j = 0; j < p.tasks.length; j++) {
+          text += '  [ ] ' + p.tasks[j] + '\n';
+        }
+        text += '\n';
+      }
+
+      text += '---\nGenerated by Lensmor Trade Show Tools\nhttps://lensmorofficial.github.io/trade-show-tools/checklist-generator/\n';
+
+      navigator.clipboard.writeText(text).then(function() {
+        var btn = document.querySelector('.btn-outline');
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = 'Copy as Text'; }, 2000);
+      });
+    }
+
+    function resetForm() {
+      var d = new Date();
+      d.setMonth(d.getMonth() + 3);
+      document.getElementById('showDate').value = d.toISOString().split('T')[0];
+      document.getElementById('showName').value = '';
+      document.getElementById('exhibitorType').value = 'returning';
+      document.getElementById('focus').value = 'leads';
+      document.getElementById('results').style.display = 'none';
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') generate();
+    });
+  </script>
+</body>
+</html>
