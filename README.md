@@ -21,7 +21,7 @@
 | Tool | Description | Status |
 |------|-------------|--------|
 | [ROI Calculator](https://lensmorofficial.github.io/trade-show-tools/roi-calculator/) | Calculate trade show return on investment, cost per lead, and break-even analysis | Live |
-| Budget Planner | Plan exhibition budgets with industry benchmarks | Coming Soon |
+| [Budget Planner](https://lensmorofficial.github.io/trade-show-tools/budget-planner/) | Plan exhibition budgets with industry benchmarks across 8 categories | Live |
 | Checklist Generator | Generate time-based pre-show task checklists | Coming Soon |
 
 ## ROI Calculator

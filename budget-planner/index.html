@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trade Show Budget Planner — Free Online Tool</title>
+  <meta name="description" content="Plan your trade show budget with industry benchmarks. Enter your total budget and booth size to get a recommended allocation across all cost categories.">
+  <meta name="keywords" content="trade show budget planner, exhibition budget calculator, trade show cost breakdown, event budget template">
+  <link rel="canonical" href="https://lensmorofficial.github.io/trade-show-tools/budget-planner/">
+  <meta property="og:title" content="Trade Show Budget Planner — Free Online Tool">
+  <meta property="og:description" content="Plan your trade show budget with industry benchmarks. Get a recommended cost allocation instantly.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://lensmorofficial.github.io/trade-show-tools/budget-planner/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Trade Show Budget Planner — Free Online Tool">
+  <meta name="twitter:description" content="Plan your trade show budget with industry benchmarks. Free, no signup required.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Trade Show Budget Planner",
+    "description": "Plan your trade show budget with industry benchmarks. Enter your total budget and booth size to get a recommended cost allocation.",
+    "url": "https://lensmorofficial.github.io/trade-show-tools/budget-planner/",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "Lensmor", "url": "https://www.lensmor.com" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #6b75ff;
+      --primary-hover: #8189ff;
+      --green: #34d399;
+      --red: #f87171;
+      --amber: #fbbf24;
+      --bg: #0c0c12;
+      --bg-card: #1a1a24;
+      --bg-input: #0c0c12;
+      --stroke: #1f2033;
+      --text: #ffffff;
+      --text-secondary: #a7a7a8;
+      --text-dim: #6b6b6c;
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
+
+    body {
+      font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      letter-spacing: -0.015em;
+      min-height: 100vh;
+    }
+
+    .container { max-width: 800px; margin: 0 auto; padding: 2.5rem 1.25rem; }
+
+    header { text-align: center; margin-bottom: 2.5rem; }
+    header h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.15; }
+    header p { color: var(--text-secondary); font-size: 1rem; }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card h2 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--stroke);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.5rem; }
+    }
+
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { font-size: 0.875rem; font-weight: 500; color: var(--text); margin-bottom: 0.2rem; }
+    .form-group .hint { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.4rem; }
+
+    .input-wrap { position: relative; display: flex; align-items: center; }
+    .input-wrap .prefix, .input-wrap .suffix { position: absolute; color: var(--text-dim); font-size: 0.875rem; pointer-events: none; }
+    .input-wrap .prefix { left: 0.75rem; }
+    .input-wrap .suffix { right: 0.75rem; }
+
+    input[type="number"], select {
+      width: 100%;
+      padding: 0.625rem 0.75rem;
+      background: var(--bg-input);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+      letter-spacing: -0.015em;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -moz-appearance: textfield;
+    }
+
+    select { cursor: pointer; }
+    select option { background: var(--bg-card); color: var(--text); }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    input[type="number"]:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(107, 117, 255, 0.15);
+    }
+
+    .has-prefix input { padding-left: 1.75rem; }
+    .has-suffix input { padding-right: 2.5rem; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 0.75rem 1.5rem;
+      background: var(--primary);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: -0.015em;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 0.5rem;
+    }
+
+    .btn:hover { background: var(--primary-hover); }
+    .btn:active { transform: scale(0.99); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      font-weight: 400;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .btn-secondary:hover { color: var(--text-secondary); background: rgba(255,255,255,0.03); }
+
+    /* Results */
+    #results { display: none; }
+    #results.visible { display: block; }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--stroke);
+      font-size: 0.875rem;
+    }
+
+    .summary-row:last-child { border-bottom: none; }
+
+    .summary-row .cat-name {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text);
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .summary-row .cat-pct {
+      width: 50px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+    }
+
+    .summary-row .cat-amount {
+      width: 100px;
+      text-align: right;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .summary-row .cat-bar {
+      width: 120px;
+      height: 6px;
+      background: var(--stroke);
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 0 0.75rem;
+    }
+
+    .summary-row .cat-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    @media (max-width: 600px) {
+      .summary-row .cat-bar { display: none; }
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem 0 0;
+      margin-top: 0.5rem;
+      border-top: 1px solid var(--primary);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .total-row .over-budget { color: var(--red); }
+
+    .tip {
+      margin-top: 1.25rem;
+      padding: 1rem;
+      background: rgba(107, 117, 255, 0.06);
+      border: 1px solid rgba(107, 117, 255, 0.15);
+      border-radius: var(--radius);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .tip strong { color: var(--text); }
+
+    footer {
+      text-align: center;
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--stroke);
+    }
+
+    footer p { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; }
+    footer a { color: var(--primary); text-decoration: none; transition: color 0.15s; }
+    footer a:hover { color: var(--primary-hover); }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1.25rem;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .back-link:hover { color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../" class="back-link">&larr; All Tools</a>
+
+    <header>
+      <h1>Trade Show Budget Planner</h1>
+      <p>Get a recommended budget allocation based on industry benchmarks.</p>
+    </header>
+
+    <div class="card">
+      <h2>Your Parameters</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="totalBudget">Total Budget</label>
+          <div class="hint">All-in budget for this trade show</div>
+          <div class="input-wrap has-prefix">
+            <span class="prefix">$</span>
+            <input type="number" id="totalBudget" value="30000" min="1000" step="1000">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="boothSize">Booth Size</label>
+          <div class="hint">Affects space rental proportion</div>
+          <select id="boothSize">
+            <option value="small">Small (10x10 ft / 9 sqm)</option>
+            <option value="medium" selected>Medium (10x20 ft / 18 sqm)</option>
+            <option value="large">Large (20x20 ft / 36 sqm)</option>
+            <option value="island">Island (20x30+ ft / 55+ sqm)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="teamSize">Team Size</label>
+          <div class="hint">Staff attending the show</div>
+          <div class="input-wrap has-suffix">
+            <input type="number" id="teamSize" value="4" min="1" max="50" step="1">
+            <span class="suffix">ppl</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="showDays">Show Duration</label>
+          <div class="hint">Number of exhibition days</div>
+          <div class="input-wrap has-suffix">
+            <input type="number" id="showDays" value="3" min="1" max="14" step="1">
+            <span class="suffix">days</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" onclick="plan()">Plan Budget</button>
+    <button class="btn btn-secondary" onclick="resetForm()">Reset</button>
+
+    <div id="results" class="card">
+      <h2>Recommended Allocation</h2>
+      <div id="breakdownList"></div>
+      <div class="total-row">
+        <span>Total</span>
+        <span id="totalAllocated">—</span>
+      </div>
+      <div class="tip" id="tipBox"></div>
+    </div>
+
+    <footer>
+      <p>
+        Built by <a href="https://www.lensmor.com/?utm_source=github&utm_medium=tool&utm_campaign=budget-planner" target="_blank" rel="noopener">Lensmor</a> &mdash; AI-powered trade show intelligence for B2B teams.
+      </p>
+      <p>
+        <a href="https://github.com/LensmorOfficial/trade-show-tools" target="_blank" rel="noopener">View on GitHub</a>
+        &middot;
+        <a href="../roi-calculator/">ROI Calculator</a>
+        &middot;
+        <a href="https://github.com/LensmorOfficial/trade-show-calendar" target="_blank" rel="noopener">Trade Show Data</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    var colors = ['#6b75ff','#34d399','#f87171','#fbbf24','#a78bfa','#f472b6','#38bdf8','#fb923c'];
+
+    // Industry benchmark percentages by booth size
+    var benchmarks = {
+      small:  { space: 28, design: 18, travel: 20, marketing: 12, staff: 10, shipping: 5, tech: 4, misc: 3 },
+      medium: { space: 30, design: 20, travel: 18, marketing: 12, staff: 9,  shipping: 5, tech: 3, misc: 3 },
+      large:  { space: 32, design: 22, travel: 15, marketing: 11, staff: 8,  shipping: 6, tech: 3, misc: 3 },
+      island: { space: 35, design: 24, travel: 12, marketing: 10, staff: 7,  shipping: 6, tech: 3, misc: 3 }
+    };
+
+    var catLabels = {
+      space: 'Booth Space & Rental',
+      design: 'Booth Design & Build',
+      travel: 'Travel & Accommodation',
+      marketing: 'Marketing & Collateral',
+      staff: 'Staff & Labor',
+      shipping: 'Shipping & Logistics',
+      tech: 'Technology & AV',
+      misc: 'Miscellaneous'
+    };
+
+    function fmt(n) {
+      return '$' + Math.round(n).toLocaleString('en-US');
+    }
+
+    function plan() {
+      var budget = parseFloat(document.getElementById('totalBudget').value) || 0;
+      var size = document.getElementById('boothSize').value;
+      var team = parseInt(document.getElementById('teamSize').value) || 4;
+      var days = parseInt(document.getElementById('showDays').value) || 3;
+
+      if (budget <= 0) return;
+
+      var bm = benchmarks[size];
+
+      // Adjust travel based on team size and days
+      var travelAdjust = 0;
+      if (team > 4) travelAdjust = Math.min(8, (team - 4) * 1.5);
+      if (days > 3) travelAdjust += Math.min(4, (days - 3) * 1);
+
+      var adjusted = {};
+      var keys = Object.keys(bm);
+      var totalPct = 0;
+
+      for (var i = 0; i < keys.length; i++) {
+        var k = keys[i];
+        if (k === 'travel') {
+          adjusted[k] = bm[k] + travelAdjust;
+        } else if (k === 'space') {
+          adjusted[k] = bm[k] - travelAdjust * 0.4;
+        } else if (k === 'design') {
+          adjusted[k] = bm[k] - travelAdjust * 0.3;
+        } else if (k === 'marketing') {
+          adjusted[k] = bm[k] - travelAdjust * 0.2;
+        } else if (k === 'misc') {
+          adjusted[k] = bm[k] - travelAdjust * 0.1;
+        } else {
+          adjusted[k] = bm[k];
+        }
+        adjusted[k] = Math.max(1, adjusted[k]);
+        totalPct += adjusted[k];
+      }
+
+      // Normalize to 100%
+      for (var i = 0; i < keys.length; i++) {
+        adjusted[keys[i]] = (adjusted[keys[i]] / totalPct) * 100;
+      }
+
+      var maxPct = Math.max.apply(null, keys.map(function(k) { return adjusted[k]; }));
+      var html = '';
+
+      for (var i = 0; i < keys.length; i++) {
+        var k = keys[i];
+        var pct = adjusted[k];
+        var amount = budget * pct / 100;
+        var barW = (pct / maxPct) * 100;
+
+        html += '<div class="summary-row">' +
+          '<span class="cat-name">' + catLabels[k] + '</span>' +
+          '<span class="cat-pct">' + Math.round(pct) + '%</span>' +
+          '<div class="cat-bar"><div class="cat-bar-fill" style="width:' + barW + '%;background:' + colors[i] + '"></div></div>' +
+          '<span class="cat-amount">' + fmt(amount) + '</span>' +
+          '</div>';
+      }
+
+      document.getElementById('breakdownList').innerHTML = html;
+      document.getElementById('totalAllocated').textContent = fmt(budget);
+
+      // Contextual tip
+      var tip = '';
+      if (budget < 10000) {
+        tip = '<strong>Tight budget tip:</strong> Focus spending on booth presence and skip custom builds. Use modular/rented displays and prioritize pre-show marketing to maximize foot traffic.';
+      } else if (budget < 30000) {
+        tip = '<strong>Mid-range tip:</strong> You have room for a semi-custom booth. Invest in quality graphics and lighting — they have the highest impact per dollar on booth attractiveness.';
+      } else if (budget < 75000) {
+        tip = '<strong>Strong budget tip:</strong> Consider allocating more to pre-show outreach and meeting scheduling. The best ROI at this level comes from having a full pipeline before the show starts.';
+      } else {
+        tip = '<strong>Premium budget tip:</strong> At this level, the difference-maker is lead capture technology and post-show follow-up automation. Make sure your CRM integration is solid before the event.';
+      }
+
+      var perPerson = budget / team;
+      if (perPerson < 3000) {
+        tip += ' <strong>Watch out:</strong> Your per-person budget (' + fmt(perPerson) + ') is below the $3,000 threshold — consider reducing team size to improve quality of presence.';
+      }
+
+      document.getElementById('tipBox').innerHTML = tip;
+
+      var results = document.getElementById('results');
+      results.classList.add('visible');
+      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function resetForm() {
+      document.getElementById('totalBudget').value = 30000;
+      document.getElementById('boothSize').value = 'medium';
+      document.getElementById('teamSize').value = 4;
+      document.getElementById('showDays').value = 3;
+      document.getElementById('results').classList.remove('visible');
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') plan();
+    });
+  </script>
+</body>
+</html>
