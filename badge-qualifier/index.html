@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Badge Qualifier — AI Lead Scoring from Photos</title>
+  <meta name="description" content="Snap a badge or business card at a trade show, add a voice note, and get instant AI lead qualification with structured CRM-ready data.">
+  <link rel="canonical" href="https://lensmorofficial.github.io/trade-show-tools/badge-qualifier/">
+  <meta property="og:title" content="Badge Qualifier — AI Lead Scoring from Photos">
+  <meta property="og:description" content="Snap a badge, get instant AI lead qualification. No typing required.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Badge Qualifier",
+    "description": "AI-powered lead qualification from badge and business card photos at trade shows.",
+    "url": "https://lensmorofficial.github.io/trade-show-tools/badge-qualifier/",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "Lensmor", "url": "https://www.lensmor.com" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #6b75ff; --primary-hover: #8189ff;
+      --green: #34d399; --red: #f87171; --amber: #fbbf24;
+      --bg: #0c0c12; --bg-card: #1a1a24; --bg-input: #0c0c12;
+      --stroke: #1f2033; --text: #ffffff; --text-secondary: #a7a7a8; --text-dim: #6b6b6c;
+      --radius: 10px; --radius-lg: 14px;
+    }
+    body { font-family: 'Inter Tight', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; letter-spacing: -0.015em; min-height: 100vh; }
+    .container { max-width: 600px; margin: 0 auto; padding: 2rem 1.25rem; }
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+    header p { color: var(--text-secondary); font-size: 0.9rem; }
+    .card { background: var(--bg-card); border: 1px solid var(--stroke); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.25rem; }
+    .card h2 { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--stroke); }
+    label { font-size: 0.85rem; font-weight: 500; display: block; margin-bottom: 0.2rem; }
+    .hint { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.4rem; }
+    input[type="password"], textarea, select { width: 100%; padding: 0.6rem 0.75rem; background: var(--bg-input); border: 1px solid var(--stroke); border-radius: var(--radius); color: var(--text); font-family: inherit; font-size: 0.85rem; }
+    textarea { resize: vertical; min-height: 60px; }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(107,117,255,0.15); }
+    select option { background: var(--bg-card); }
+    .form-row { margin-bottom: 1rem; }
+
+    /* Camera zone */
+    .capture-zone { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
+    .capture-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.4rem; padding: 1.25rem 0.5rem; background: var(--bg); border: 2px dashed var(--stroke); border-radius: var(--radius-lg); cursor: pointer; transition: border-color 0.2s; font-family: inherit; color: var(--text-secondary); font-size: 0.8rem; }
+    .capture-btn:hover { border-color: var(--primary); }
+    .capture-btn.has-data { border-color: var(--green); border-style: solid; }
+    .capture-btn .icon { font-size: 1.5rem; }
+    .capture-btn.has-data .icon { color: var(--green); }
+    #photoInput, #galleryInput { display: none; }
+
+    .preview-img { max-width: 100%; max-height: 200px; border-radius: var(--radius); margin-bottom: 0.75rem; display: none; }
+    .preview-img.visible { display: block; }
+
+    /* Voice */
+    .voice-controls { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; }
+    .rec-btn { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--stroke); background: var(--bg); color: var(--text-secondary); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+    .rec-btn.recording { border-color: var(--red); background: rgba(248,113,113,0.1); color: var(--red); animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+    .voice-status { font-size: 0.8rem; color: var(--text-dim); }
+
+    .btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 0.75rem; background: var(--primary); color: #fff; font-family: inherit; font-size: 0.875rem; font-weight: 500; border: none; border-radius: var(--radius); cursor: pointer; transition: background 0.2s; }
+    .btn:hover { background: var(--primary-hover); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-outline { background: transparent; border: 1px solid var(--stroke); color: var(--text-secondary); margin-top: 0.75rem; }
+    .btn-outline:hover { border-color: var(--primary); color: var(--text); background: transparent; }
+    .btn-sm { padding: 0.5rem 0.75rem; font-size: 0.8rem; width: auto; }
+
+    /* Result card */
+    #result { display: none; }
+    #result.visible { display: block; }
+    .lead-card { padding: 0; }
+    .lead-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+    .lead-score { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 700; flex-shrink: 0; }
+    .lead-score.hot { background: rgba(52,211,153,0.15); color: var(--green); border: 2px solid rgba(52,211,153,0.3); }
+    .lead-score.warm { background: rgba(251,191,36,0.1); color: var(--amber); border: 2px solid rgba(251,191,36,0.2); }
+    .lead-score.cold { background: rgba(107,107,108,0.1); color: var(--text-dim); border: 2px solid var(--stroke); }
+    .lead-name { font-size: 1.1rem; font-weight: 700; }
+    .lead-title { font-size: 0.85rem; color: var(--text-secondary); }
+    .lead-company { font-size: 0.85rem; color: var(--primary); }
+
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; }
+    .info-item { padding: 0.6rem; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--stroke); }
+    .info-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-dim); }
+    .info-value { font-size: 0.85rem; font-weight: 500; margin-top: 0.1rem; }
+
+    .assessment { padding: 0.75rem; background: rgba(107,117,255,0.06); border-left: 2px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0; margin-bottom: 0.75rem; font-size: 0.8rem; color: var(--text-secondary); line-height: 1.6; }
+    .assessment strong { color: var(--text); }
+    .next-steps { padding: 0.75rem; background: rgba(52,211,153,0.06); border-left: 2px solid var(--green); border-radius: 0 var(--radius) var(--radius) 0; font-size: 0.8rem; color: var(--text-secondary); line-height: 1.6; }
+    .next-steps strong { color: var(--green); }
+
+    .leads-log { margin-top: 1.25rem; }
+    .leads-log h3 { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-dim); margin-bottom: 0.5rem; }
+    .log-entry { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0; border-bottom: 1px solid var(--stroke); font-size: 0.8rem; }
+    .log-entry:last-child { border-bottom: none; }
+    .log-score { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
+    .log-info { flex: 1; }
+    .log-name { font-weight: 500; }
+    .log-company { color: var(--text-dim); font-size: 0.75rem; }
+
+    .key-note { font-size: 0.7rem; color: var(--text-dim); margin-top: 0.5rem; }
+    footer { text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--stroke); }
+    footer p { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; }
+    footer a { color: var(--primary); text-decoration: none; }
+    .back-link { display: inline-block; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-dim); text-decoration: none; }
+    .back-link:hover { color: var(--primary); }
+
+    @media (max-width: 480px) {
+      .info-grid { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../" class="back-link">&larr; All Tools</a>
+
+    <header>
+      <h1>Badge Qualifier</h1>
+      <p>Snap a badge or business card. Add a voice note. Get instant AI lead qualification.</p>
+    </header>
+
+    <div class="card">
+      <h2>Setup</h2>
+      <div class="form-row">
+        <label>API Key</label>
+        <input type="password" id="apiKey" placeholder="sk-ant-...">
+        <div class="key-note">Your Anthropic API key. Stored locally only. <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--primary)">Get one</a></div>
+      </div>
+      <div class="form-row">
+        <label>Your ICP (optional)</label>
+        <div class="hint">Helps AI judge if this lead fits your target</div>
+        <textarea id="icpContext" placeholder="e.g. We sell warehouse robotics to enterprise logistics companies, 500+ employees"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Capture</h2>
+
+      <div class="capture-zone">
+        <label class="capture-btn" id="cameraBtn">
+          <span class="icon">&#128247;</span>
+          <span>Take Photo</span>
+          <input type="file" id="photoInput" accept="image/*" capture="environment">
+        </label>
+        <label class="capture-btn" id="galleryBtn">
+          <span class="icon">&#128193;</span>
+          <span>From Gallery</span>
+          <input type="file" id="galleryInput" accept="image/*">
+        </label>
+      </div>
+
+      <img id="previewImg" class="preview-img">
+
+      <div class="form-row">
+        <label>Voice Note (optional)</label>
+        <div class="hint">Tap to record context: interest level, product discussed, follow-up actions</div>
+        <div class="voice-controls">
+          <button class="rec-btn" id="recBtn" onclick="toggleRecording()">&#9679;</button>
+          <span class="voice-status" id="voiceStatus">Tap to record</span>
+        </div>
+        <textarea id="voiceText" placeholder="Or type notes here: 'Interested in Product A, wants demo next week, budget approved'"></textarea>
+      </div>
+
+      <button class="btn" id="qualifyBtn" onclick="qualify()">Qualify This Lead</button>
+    </div>
+
+    <div id="result">
+      <div class="card lead-card">
+        <h2>Lead Qualification</h2>
+        <div class="lead-header">
+          <div class="lead-score" id="leadScore">—</div>
+          <div>
+            <div class="lead-name" id="leadName">—</div>
+            <div class="lead-title" id="leadTitle">—</div>
+            <div class="lead-company" id="leadCompany">—</div>
+          </div>
+        </div>
+
+        <div class="info-grid" id="infoGrid"></div>
+        <div class="assessment" id="assessment"></div>
+        <div class="next-steps" id="nextSteps"></div>
+
+        <div style="display:flex;gap:0.5rem;margin-top:1rem;">
+          <button class="btn btn-outline btn-sm" style="flex:1" onclick="copyLead()">Copy to CRM</button>
+          <button class="btn btn-outline btn-sm" style="flex:1" onclick="saveAndNext()">Save & Next</button>
+        </div>
+      </div>
+
+      <div class="card leads-log" id="leadsLog" style="display:none">
+        <h3>Session Log (<span id="logCount">0</span> leads)</h3>
+        <div id="logList"></div>
+        <button class="btn btn-outline" onclick="exportLeads()">Export All Leads (CSV)</button>
+      </div>
+    </div>
+
+    <footer>
+      <p>Built by <a href="https://www.lensmor.com/?utm_source=github&utm_medium=tool&utm_campaign=badge-qualifier" target="_blank">Lensmor</a></p>
+      <p><a href="https://github.com/LensmorOfficial/trade-show-tools" target="_blank">GitHub</a> &middot; <a href="../icp-matcher/">ICP Matcher</a> &middot; <a href="../roi-calculator/">ROI Calculator</a></p>
+    </footer>
+  </div>
+
+  <script>
+    var imageBase64 = null;
+    var isRecording = false;
+    var recognition = null;
+    var sessionLeads = [];
+    var currentLead = null;
+
+    // Load saved state
+    try {
+      var k = localStorage.getItem('badge-api-key');
+      if (k) document.getElementById('apiKey').value = k;
+      var icp = localStorage.getItem('badge-icp');
+      if (icp) document.getElementById('icpContext').value = icp;
+      var saved = localStorage.getItem('badge-session');
+      if (saved) sessionLeads = JSON.parse(saved);
+    } catch(e) {}
+
+    document.getElementById('apiKey').addEventListener('change', function() {
+      try { localStorage.setItem('badge-api-key', this.value); } catch(e) {}
+    });
+    document.getElementById('icpContext').addEventListener('change', function() {
+      try { localStorage.setItem('badge-icp', this.value); } catch(e) {}
+    });
+
+    // Photo handling
+    document.getElementById('photoInput').addEventListener('change', handleImage);
+    document.getElementById('galleryInput').addEventListener('change', handleImage);
+
+    function handleImage(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+
+      // Compress image for API
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        var img = new Image();
+        img.onload = function() {
+          var canvas = document.createElement('canvas');
+          var max = 1024;
+          var w = img.width, h = img.height;
+          if (w > max || h > max) {
+            if (w > h) { h = h * max / w; w = max; }
+            else { w = w * max / h; h = max; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          imageBase64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+
+          document.getElementById('previewImg').src = canvas.toDataURL('image/jpeg', 0.8);
+          document.getElementById('previewImg').classList.add('visible');
+
+          var btn = e.target.closest('.capture-btn');
+          btn.classList.add('has-data');
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Voice recording (Web Speech API)
+    function toggleRecording() {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        document.getElementById('voiceStatus').textContent = 'Speech recognition not supported. Type your notes instead.';
+        return;
+      }
+
+      var btn = document.getElementById('recBtn');
+      var status = document.getElementById('voiceStatus');
+
+      if (isRecording) {
+        recognition.stop();
+        isRecording = false;
+        btn.classList.remove('recording');
+        status.textContent = 'Recording saved';
+        return;
+      }
+
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SR();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = function(e) {
+        var text = '';
+        for (var i = 0; i < e.results.length; i++) {
+          text += e.results[i][0].transcript;
+        }
+        document.getElementById('voiceText').value = text;
+      };
+
+      recognition.onerror = function(e) {
+        status.textContent = 'Error: ' + e.error;
+        btn.classList.remove('recording');
+        isRecording = false;
+      };
+
+      recognition.onend = function() {
+        btn.classList.remove('recording');
+        isRecording = false;
+        status.textContent = 'Recording saved';
+      };
+
+      recognition.start();
+      isRecording = true;
+      btn.classList.add('recording');
+      status.textContent = 'Listening... tap to stop';
+    }
+
+    async function qualify() {
+      var apiKey = document.getElementById('apiKey').value.trim();
+      if (!apiKey) { alert('Please enter your API key'); return; }
+      if (!imageBase64) { alert('Please take or upload a photo first'); return; }
+
+      var btn = document.getElementById('qualifyBtn');
+      btn.disabled = true;
+      btn.textContent = 'Analyzing...';
+
+      var notes = document.getElementById('voiceText').value.trim();
+      var icp = document.getElementById('icpContext').value.trim();
+
+      var prompt = 'You are an expert B2B sales qualifier at a trade show. Analyze this badge/business card photo.\n\n';
+      prompt += 'EXTRACT from the image:\n- Full name\n- Job title\n- Company name\n- Email (if visible)\n- Phone (if visible)\n- Any other details (booth number, company tagline, etc.)\n\n';
+
+      if (icp) prompt += 'OUR ICP: ' + icp + '\n\n';
+      if (notes) prompt += 'SALES REP NOTES: ' + notes + '\n\n';
+
+      prompt += 'RESPOND with ONLY a JSON object (no markdown):\n{\n';
+      prompt += '  "name": "extracted full name",\n';
+      prompt += '  "title": "job title",\n';
+      prompt += '  "company": "company name",\n';
+      prompt += '  "email": "email or empty string",\n';
+      prompt += '  "phone": "phone or empty string",\n';
+      prompt += '  "score": 0-100 integer (ICP fit + buying authority + intent signals),\n';
+      prompt += '  "tier": "hot" or "warm" or "cold",\n';
+      prompt += '  "buying_authority": "Decision Maker / Influencer / End User / Unknown",\n';
+      prompt += '  "company_profile": "1-sentence company description based on your knowledge",\n';
+      prompt += '  "assessment": "2-3 sentences: why this score, ICP fit analysis, buying signals",\n';
+      prompt += '  "next_steps": "2-3 specific recommended next actions for the sales rep",\n';
+      prompt += '  "notes_summary": "cleaned-up summary of the sales rep voice notes"\n';
+      prompt += '}';
+
+      try {
+        var resp = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1024,
+            messages: [{
+              role: 'user',
+              content: [
+                { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageBase64 } },
+                { type: 'text', text: prompt }
+              ]
+            }]
+          })
+        });
+
+        if (!resp.ok) {
+          var err = await resp.json();
+          throw new Error(err.error?.message || 'API error');
+        }
+
+        var data = await resp.json();
+        var text = data.content[0].text;
+        var json = text.match(/\{[\s\S]*\}/);
+        if (!json) throw new Error('Could not parse response');
+
+        currentLead = JSON.parse(json[0]);
+        renderLead(currentLead);
+      } catch(e) {
+        alert('Error: ' + e.message);
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Qualify This Lead';
+    }
+
+    function renderLead(lead) {
+      var scoreEl = document.getElementById('leadScore');
+      scoreEl.textContent = lead.score;
+      scoreEl.className = 'lead-score ' + lead.tier;
+
+      document.getElementById('leadName').textContent = lead.name || 'Unknown';
+      document.getElementById('leadTitle').textContent = lead.title || '';
+      document.getElementById('leadCompany').textContent = lead.company || '';
+
+      var infoItems = [];
+      if (lead.email) infoItems.push({ label: 'Email', value: lead.email });
+      if (lead.phone) infoItems.push({ label: 'Phone', value: lead.phone });
+      infoItems.push({ label: 'Authority', value: lead.buying_authority || 'Unknown' });
+      infoItems.push({ label: 'Tier', value: (lead.tier || '').toUpperCase() });
+      if (lead.company_profile) infoItems.push({ label: 'Company', value: lead.company_profile });
+      if (lead.notes_summary) infoItems.push({ label: 'Notes', value: lead.notes_summary });
+
+      var gridHtml = '';
+      infoItems.forEach(function(item) {
+        gridHtml += '<div class="info-item"><div class="info-label">' + item.label + '</div><div class="info-value">' + escHtml(item.value) + '</div></div>';
+      });
+      document.getElementById('infoGrid').innerHTML = gridHtml;
+
+      document.getElementById('assessment').innerHTML = '<strong>Assessment</strong><br>' + escHtml(lead.assessment || '');
+      document.getElementById('nextSteps').innerHTML = '<strong>Recommended Next Steps</strong><br>' + escHtml(lead.next_steps || '');
+
+      document.getElementById('result').classList.add('visible');
+      document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    function copyLead() {
+      if (!currentLead) return;
+      var text = [
+        currentLead.name,
+        currentLead.title,
+        currentLead.company,
+        currentLead.email || '',
+        currentLead.phone || '',
+        'Score: ' + currentLead.score + ' (' + currentLead.tier + ')',
+        'Authority: ' + currentLead.buying_authority,
+        currentLead.assessment,
+        'Next: ' + currentLead.next_steps,
+        currentLead.notes_summary ? 'Notes: ' + currentLead.notes_summary : ''
+      ].filter(Boolean).join('\n');
+
+      navigator.clipboard.writeText(text).then(function() {
+        var btns = document.querySelectorAll('.btn-sm');
+        btns[0].textContent = 'Copied!';
+        setTimeout(function() { btns[0].textContent = 'Copy to CRM'; }, 1500);
+      });
+    }
+
+    function saveAndNext() {
+      if (!currentLead) return;
+      currentLead.timestamp = new Date().toISOString();
+      sessionLeads.push(currentLead);
+      try { localStorage.setItem('badge-session', JSON.stringify(sessionLeads)); } catch(e) {}
+      renderLog();
+
+      // Reset capture
+      imageBase64 = null;
+      document.getElementById('previewImg').classList.remove('visible');
+      document.getElementById('voiceText').value = '';
+      document.querySelectorAll('.capture-btn').forEach(function(b) { b.classList.remove('has-data'); });
+      document.getElementById('result').classList.remove('visible');
+      currentLead = null;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderLog() {
+      if (sessionLeads.length === 0) return;
+      document.getElementById('leadsLog').style.display = 'block';
+      document.getElementById('logCount').textContent = sessionLeads.length;
+
+      var html = '';
+      sessionLeads.slice().reverse().forEach(function(l) {
+        var cls = l.tier === 'hot' ? 'score-high' : l.tier === 'warm' ? 'score-mid' : 'score-low';
+        html += '<div class="log-entry"><div class="log-score ' + cls + '" style="background:' +
+          (l.tier === 'hot' ? 'rgba(52,211,153,0.15);color:var(--green)' : l.tier === 'warm' ? 'rgba(251,191,36,0.1);color:var(--amber)' : 'rgba(107,107,108,0.1);color:var(--text-dim)') +
+          '">' + l.score + '</div><div class="log-info"><div class="log-name">' + escHtml(l.name) + '</div><div class="log-company">' + escHtml(l.company || '') + ' &middot; ' + escHtml(l.title || '') + '</div></div></div>';
+      });
+      document.getElementById('logList').innerHTML = html;
+    }
+
+    function exportLeads() {
+      var csv = 'Name,Title,Company,Email,Phone,Score,Tier,Authority,Assessment,Next Steps,Notes,Timestamp\n';
+      sessionLeads.forEach(function(l) {
+        csv += [l.name,l.title,l.company,l.email||'',l.phone||'',l.score,l.tier,l.buying_authority,l.assessment,l.next_steps,l.notes_summary||'',l.timestamp||''].map(function(v) { return '"' + String(v).replace(/"/g,'""') + '"'; }).join(',') + '\n';
+      });
+      var blob = new Blob([csv], { type: 'text/csv' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'trade-show-leads-' + new Date().toISOString().split('T')[0] + '.csv';
+      a.click();
+    }
+
+    // Render existing session log on load
+    renderLog();
+  </script>
+</body>
+</html>

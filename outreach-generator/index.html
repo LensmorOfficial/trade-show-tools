@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post-Show Outreach Generator — AI Follow-Up Emails in 48hrs</title>
+  <meta name="description" content="Upload your trade show leads, add context, and generate hyper-personalized follow-up emails and LinkedIn messages for every contact within 48 hours of the show.">
+  <link rel="canonical" href="https://lensmorofficial.github.io/trade-show-tools/outreach-generator/">
+  <meta property="og:title" content="Post-Show Outreach Generator — AI Follow-Up in 48hrs">
+  <meta property="og:description" content="Generate personalized post-show follow-up emails for every lead. Beat the 48-hour window.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Post-Show Outreach Generator",
+    "description": "Generate hyper-personalized post-show follow-up emails and LinkedIn messages from trade show lead data.",
+    "url": "https://lensmorofficial.github.io/trade-show-tools/outreach-generator/",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "Lensmor", "url": "https://www.lensmor.com" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #6b75ff; --primary-hover: #8189ff;
+      --green: #34d399; --red: #f87171; --amber: #fbbf24;
+      --bg: #0c0c12; --bg-card: #1a1a24; --bg-input: #0c0c12;
+      --stroke: #1f2033; --text: #ffffff; --text-secondary: #a7a7a8; --text-dim: #6b6b6c;
+      --radius: 10px; --radius-lg: 14px;
+    }
+    body { font-family: 'Inter Tight', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; letter-spacing: -0.015em; min-height: 100vh; }
+    .container { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.25rem; }
+    header { text-align: center; margin-bottom: 2.5rem; }
+    header h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+    header p { color: var(--text-secondary); font-size: 0.9rem; max-width: 540px; margin: 0 auto; }
+    .card { background: var(--bg-card); border: 1px solid var(--stroke); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.25rem; }
+    .card h2 { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 1.25rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--stroke); }
+    label { font-size: 0.85rem; font-weight: 500; display: block; margin-bottom: 0.2rem; }
+    .hint { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.4rem; }
+    input[type="text"], input[type="password"], textarea, select { width: 100%; padding: 0.6rem 0.75rem; background: var(--bg-input); border: 1px solid var(--stroke); border-radius: var(--radius); color: var(--text); font-family: inherit; font-size: 0.85rem; }
+    textarea { resize: vertical; min-height: 70px; }
+    select option { background: var(--bg-card); }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(107,117,255,0.15); }
+    .form-row { margin-bottom: 1rem; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } header h1 { font-size: 1.5rem; } }
+
+    .drop-zone { border: 2px dashed var(--stroke); border-radius: var(--radius-lg); padding: 2rem; text-align: center; cursor: pointer; transition: border-color 0.2s; margin-bottom: 1rem; }
+    .drop-zone:hover { border-color: var(--primary); }
+    .drop-zone.has-file { border-color: var(--green); border-style: solid; }
+    .drop-zone .dz-text { font-size: 0.85rem; color: var(--text-secondary); }
+    .drop-zone .dz-hint { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem; }
+    #fileInput { display: none; }
+
+    .preview-info { font-size: 0.8rem; color: var(--text-secondary); padding: 0.75rem; background: var(--bg); border-radius: var(--radius); margin-bottom: 1rem; display: none; }
+    .preview-info.visible { display: block; }
+
+    .btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 0.75rem; background: var(--primary); color: #fff; font-family: inherit; font-size: 0.875rem; font-weight: 500; border: none; border-radius: var(--radius); cursor: pointer; transition: background 0.2s; }
+    .btn:hover { background: var(--primary-hover); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-outline { background: transparent; border: 1px solid var(--stroke); color: var(--text-secondary); margin-top: 0.75rem; }
+    .btn-outline:hover { border-color: var(--primary); color: var(--text); background: transparent; }
+
+    .progress-bar { width: 100%; height: 4px; background: var(--stroke); border-radius: 2px; margin: 1rem 0; overflow: hidden; display: none; }
+    .progress-bar.visible { display: block; }
+    .progress-fill { height: 100%; background: var(--primary); border-radius: 2px; transition: width 0.3s; width: 0%; }
+    .status-text { font-size: 0.8rem; color: var(--text-dim); text-align: center; display: none; }
+    .status-text.visible { display: block; }
+
+    #results { display: none; }
+    #results.visible { display: block; }
+
+    .outreach-card { padding: 1.25rem; background: var(--bg); border: 1px solid var(--stroke); border-radius: var(--radius-lg); margin-bottom: 1rem; }
+    .outreach-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .outreach-name { font-weight: 600; }
+    .outreach-meta { font-size: 0.8rem; color: var(--text-dim); }
+    .outreach-tier { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.15rem 0.4rem; border-radius: 3px; font-weight: 600; margin-left: auto; }
+    .tier-hot { background: rgba(52,211,153,0.15); color: var(--green); }
+    .tier-warm { background: rgba(251,191,36,0.1); color: var(--amber); }
+    .tier-cold { background: rgba(107,107,108,0.1); color: var(--text-dim); }
+
+    .msg-tabs { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .msg-tab { font-size: 0.75rem; padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer; background: var(--bg-card); border: 1px solid var(--stroke); color: var(--text-dim); font-family: inherit; }
+    .msg-tab.active { border-color: var(--primary); color: var(--primary); }
+    .msg-content { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.7; white-space: pre-wrap; padding: 0.75rem; background: var(--bg-card); border-radius: var(--radius); border: 1px solid var(--stroke); }
+    .msg-subject { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.3rem; }
+    .copy-msg { font-size: 0.75rem; color: var(--primary); cursor: pointer; background: none; border: none; font-family: inherit; margin-top: 0.5rem; }
+    .copy-msg:hover { color: var(--primary-hover); }
+
+    .key-note { font-size: 0.7rem; color: var(--text-dim); margin-top: 0.5rem; }
+    footer { text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--stroke); }
+    footer p { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; }
+    footer a { color: var(--primary); text-decoration: none; }
+    .back-link { display: inline-block; margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-dim); text-decoration: none; }
+    .back-link:hover { color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../" class="back-link">&larr; All Tools</a>
+
+    <header>
+      <h1>Post-Show Outreach Generator</h1>
+      <p>Upload your trade show leads. Get hyper-personalized follow-up emails and LinkedIn messages for every contact — within 48 hours of the show.</p>
+    </header>
+
+    <div class="card">
+      <h2>1. Setup</h2>
+      <div class="form-row">
+        <label>Anthropic API Key</label>
+        <input type="password" id="apiKey" placeholder="sk-ant-...">
+        <div class="key-note">Stored locally. <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--primary)">Get one</a> &middot; ~$0.03 per 10 personalized emails</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2. Your Context</h2>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Show Name</label>
+          <input type="text" id="showName" placeholder="e.g. MEDICA 2026 Dusseldorf">
+        </div>
+        <div class="form-row">
+          <label>Your Company</label>
+          <input type="text" id="yourCompany" placeholder="e.g. Acme Robotics">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>What You Sell</label>
+        <div class="hint">Product/service + key value prop. Used to personalize every email.</div>
+        <textarea id="yourProduct" placeholder="e.g. We sell automated warehouse picking robots that reduce fulfillment costs by 40%. Our system integrates with SAP and Oracle WMS."></textarea>
+      </div>
+      <div class="form-row">
+        <label>Your Name & Title</label>
+        <input type="text" id="senderInfo" placeholder="e.g. Sarah Chen, Director of Business Development">
+      </div>
+      <div class="form-row">
+        <label>Tone</label>
+        <select id="tone">
+          <option value="professional" selected>Professional & Warm</option>
+          <option value="casual">Casual & Friendly</option>
+          <option value="executive">Executive / C-Level</option>
+          <option value="technical">Technical / Engineer-to-Engineer</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>3. Upload Leads</h2>
+      <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <div class="dz-text">Drop a CSV or paste lead data</div>
+        <div class="dz-hint">CSV with: Name, Company, Title, and optionally Notes/Tags. Or use the Badge Qualifier export.</div>
+      </div>
+      <input type="file" id="fileInput" accept=".csv">
+      <div class="preview-info" id="previewInfo"></div>
+
+      <div class="form-row" id="columnMapRow" style="display:none;">
+        <div class="form-grid">
+          <div><label style="font-size:0.7rem;color:var(--text-dim)">Name *</label><select id="colName"></select></div>
+          <div><label style="font-size:0.7rem;color:var(--text-dim)">Company *</label><select id="colCompany"></select></div>
+          <div><label style="font-size:0.7rem;color:var(--text-dim)">Title</label><select id="colTitle"><option value="">—</option></select></div>
+          <div><label style="font-size:0.7rem;color:var(--text-dim)">Notes / Context</label><select id="colNotes"><option value="">—</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" id="runBtn" onclick="generate()">Generate Outreach</button>
+    <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="status-text" id="statusText"></div>
+
+    <div id="results">
+      <div class="card">
+        <h2>Your Outreach Messages</h2>
+        <div id="messagesList"></div>
+        <button class="btn btn-outline" onclick="exportAll()">Export All Messages (CSV)</button>
+      </div>
+    </div>
+
+    <footer>
+      <p>Built by <a href="https://www.lensmor.com/?utm_source=github&utm_medium=tool&utm_campaign=outreach-generator" target="_blank">Lensmor</a></p>
+      <p><a href="https://github.com/LensmorOfficial/trade-show-tools" target="_blank">GitHub</a> &middot; <a href="../badge-qualifier/">Badge Qualifier</a> &middot; <a href="../icp-matcher/">ICP Matcher</a></p>
+    </footer>
+  </div>
+
+  <script>
+    var csvData = [], csvHeaders = [], allMessages = [];
+
+    try {
+      var k = localStorage.getItem('outreach-api-key'); if (k) document.getElementById('apiKey').value = k;
+      var ctx = localStorage.getItem('outreach-context');
+      if (ctx) { var c = JSON.parse(ctx); ['showName','yourCompany','yourProduct','senderInfo','tone'].forEach(function(f) { if (c[f]) document.getElementById(f).value = c[f]; }); }
+    } catch(e) {}
+
+    function saveContext() {
+      try {
+        localStorage.setItem('outreach-api-key', document.getElementById('apiKey').value);
+        localStorage.setItem('outreach-context', JSON.stringify({
+          showName: document.getElementById('showName').value, yourCompany: document.getElementById('yourCompany').value,
+          yourProduct: document.getElementById('yourProduct').value, senderInfo: document.getElementById('senderInfo').value,
+          tone: document.getElementById('tone').value
+        }));
+      } catch(e) {}
+    }
+
+    document.querySelectorAll('input,textarea,select').forEach(function(el) { el.addEventListener('change', saveContext); });
+
+    // CSV handling (reuse pattern from ICP matcher)
+    var dz = document.getElementById('dropZone');
+    dz.addEventListener('dragover', function(e) { e.preventDefault(); });
+    dz.addEventListener('drop', function(e) { e.preventDefault(); handleFile(e.dataTransfer.files[0]); });
+    document.getElementById('fileInput').addEventListener('change', function() { if (this.files[0]) handleFile(this.files[0]); });
+
+    function parseCSVLine(line) { var r=[],c='',q=false; for(var i=0;i<line.length;i++){var ch=line[i]; if(ch==='"')q=!q; else if(ch===','&&!q){r.push(c.trim());c='';} else c+=ch;} r.push(c.trim()); return r; }
+
+    function handleFile(file) {
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var lines = e.target.result.split(/\r?\n/).filter(function(l){return l.trim();});
+        csvHeaders = parseCSVLine(lines[0]);
+        csvData = [];
+        for (var i=1; i<lines.length; i++) { var v=parseCSVLine(lines[i]); if(v.length>=2) csvData.push(v); }
+
+        dz.classList.add('has-file');
+        dz.querySelector('.dz-text').textContent = file.name + ' (' + csvData.length + ' leads)';
+
+        document.getElementById('previewInfo').classList.add('visible');
+        document.getElementById('previewInfo').textContent = 'Columns: ' + csvHeaders.join(', ');
+
+        ['colName','colCompany','colTitle','colNotes'].forEach(function(id) {
+          var sel = document.getElementById(id);
+          var isOptional = id === 'colTitle' || id === 'colNotes';
+          sel.innerHTML = isOptional ? '<option value="">—</option>' : '';
+          csvHeaders.forEach(function(h,i) { sel.add(new Option(h,i)); });
+        });
+
+        // Auto-detect columns
+        csvHeaders.forEach(function(h,i) {
+          var hl = h.toLowerCase();
+          if (hl.includes('name') && !hl.includes('company')) document.getElementById('colName').value = i;
+          if (hl.includes('company') || hl.includes('org')) document.getElementById('colCompany').value = i;
+          if (hl.includes('title') || hl.includes('position') || hl.includes('role')) document.getElementById('colTitle').value = i;
+          if (hl.includes('note') || hl.includes('comment') || hl.includes('context') || hl.includes('assessment')) document.getElementById('colNotes').value = i;
+        });
+
+        document.getElementById('columnMapRow').style.display = 'block';
+      };
+      reader.readAsText(file);
+    }
+
+    async function generate() {
+      var apiKey = document.getElementById('apiKey').value.trim();
+      if (!apiKey) { alert('Please enter your API key'); return; }
+      if (csvData.length === 0) { alert('Please upload a leads CSV'); return; }
+
+      var nameCol = parseInt(document.getElementById('colName').value);
+      var compCol = parseInt(document.getElementById('colCompany').value);
+      var titleCol = document.getElementById('colTitle').value; titleCol = titleCol !== '' ? parseInt(titleCol) : -1;
+      var notesCol = document.getElementById('colNotes').value; notesCol = notesCol !== '' ? parseInt(notesCol) : -1;
+
+      var showName = document.getElementById('showName').value || 'the trade show';
+      var yourCompany = document.getElementById('yourCompany').value || 'our company';
+      var yourProduct = document.getElementById('yourProduct').value || '';
+      var senderInfo = document.getElementById('senderInfo').value || '';
+      var tone = document.getElementById('tone').value;
+
+      var leads = csvData.map(function(row) {
+        var lead = { name: row[nameCol] || '', company: row[compCol] || '' };
+        if (titleCol >= 0 && row[titleCol]) lead.title = row[titleCol];
+        if (notesCol >= 0 && row[notesCol]) lead.notes = row[notesCol];
+        var extra = [];
+        csvHeaders.forEach(function(h,i) { if (i!==nameCol && i!==compCol && i!==titleCol && i!==notesCol && row[i]) extra.push(h+': '+row[i]); });
+        if (extra.length) lead.extra = extra.join('; ');
+        return lead;
+      }).filter(function(l) { return l.name && l.company; });
+
+      if (leads.length === 0) { alert('No valid leads found'); return; }
+
+      var btn = document.getElementById('runBtn');
+      btn.disabled = true; btn.textContent = 'Generating...';
+      var pb = document.getElementById('progressBar'); pb.classList.add('visible');
+      var pf = document.getElementById('progressFill');
+      var st = document.getElementById('statusText'); st.classList.add('visible');
+
+      allMessages = [];
+      var BATCH = 5; // Smaller batches for higher quality
+      var batches = [];
+      for (var i=0; i<leads.length; i+=BATCH) batches.push(leads.slice(i, i+BATCH));
+
+      var toneGuide = { professional: 'Professional and warm. Confident but not pushy.', casual: 'Casual and friendly. Like texting a colleague.', executive: 'Concise and strategic. Respect their time. Focus on business impact.', technical: 'Technical and specific. Peer-to-peer. Reference concrete specs.' };
+
+      for (var b=0; b<batches.length; b++) {
+        st.textContent = 'Generating batch ' + (b+1) + '/' + batches.length + '...';
+        pf.style.width = ((b/batches.length)*100) + '%';
+
+        var batch = batches[b];
+        var leadList = batch.map(function(l,i) {
+          var line = (i+1) + '. ' + l.name + ' at ' + l.company;
+          if (l.title) line += ' (' + l.title + ')';
+          if (l.notes) line += ' | Notes: ' + l.notes;
+          if (l.extra) line += ' | ' + l.extra;
+          return line;
+        }).join('\n');
+
+        var prompt = 'You are an expert B2B sales copywriter creating post-trade-show follow-up messages.\n\n' +
+          'CONTEXT:\n- Show: ' + showName + '\n- Sender: ' + senderInfo + ' at ' + yourCompany + '\n' +
+          (yourProduct ? '- What we sell: ' + yourProduct + '\n' : '') +
+          '- Tone: ' + toneGuide[tone] + '\n\n' +
+          'LEADS TO WRITE FOR:\n' + leadList + '\n\n' +
+          'For EACH lead, generate:\n1. A follow-up EMAIL (subject line + body, 4-6 sentences)\n2. A LinkedIn CONNECTION MESSAGE (under 300 chars)\n\n' +
+          'Personalization rules:\n- Reference the specific show and that you met at your booth\n- If notes mention specific interests/products, weave them into the message\n- Reference something specific about their company or role\n- Include a clear, low-friction CTA (e.g. 15-min call, send resources, intro)\n- Never use generic phrases like "it was great meeting you" without adding specificity\n\n' +
+          'Respond with ONLY a JSON array. Each element:\n{\n  "name": "contact name",\n  "company": "company name",\n  "email_subject": "subject line",\n  "email_body": "full email body",\n  "linkedin_msg": "short LinkedIn message",\n  "priority": "hot/warm/cold based on available signals"\n}\n\nJSON only, no markdown.';
+
+        try {
+          var resp = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+            body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 4096, messages: [{ role: 'user', content: prompt }] })
+          });
+
+          if (!resp.ok) { var err = await resp.json(); throw new Error(err.error?.message || 'API error'); }
+
+          var data = await resp.json();
+          var text = data.content[0].text;
+          var jsonMatch = text.match(/\[[\s\S]*\]/);
+          if (jsonMatch) {
+            var msgs = JSON.parse(jsonMatch[0]);
+            msgs.forEach(function(m) { allMessages.push(m); });
+          }
+        } catch(e) { st.textContent = 'Error: ' + e.message; btn.disabled = false; btn.textContent = 'Generate Outreach'; return; }
+      }
+
+      pf.style.width = '100%';
+      st.textContent = 'Done! Generated messages for ' + allMessages.length + ' leads.';
+      renderMessages();
+      btn.disabled = false;
+      btn.textContent = 'Generate Outreach';
+    }
+
+    function escHtml(s) { var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+    function renderMessages() {
+      var html = '';
+      allMessages.forEach(function(m, idx) {
+        var tierClass = m.priority === 'hot' ? 'tier-hot' : m.priority === 'warm' ? 'tier-warm' : 'tier-cold';
+        html += '<div class="outreach-card">';
+        html += '<div class="outreach-header"><div><div class="outreach-name">' + escHtml(m.name) + '</div><div class="outreach-meta">' + escHtml(m.company) + '</div></div>';
+        html += '<span class="outreach-tier ' + tierClass + '">' + (m.priority||'').toUpperCase() + '</span></div>';
+
+        html += '<div class="msg-tabs"><button class="msg-tab active" onclick="switchTab(this,' + idx + ',\'email\')">Email</button><button class="msg-tab" onclick="switchTab(this,' + idx + ',\'linkedin\')">LinkedIn</button></div>';
+        html += '<div class="msg-subject" id="subj-' + idx + '">Subject: ' + escHtml(m.email_subject) + '</div>';
+        html += '<div class="msg-content" id="content-' + idx + '">' + escHtml(m.email_body) + '</div>';
+        html += '<button class="copy-msg" onclick="copyMsg(' + idx + ')">Copy message</button>';
+        html += '</div>';
+      });
+      document.getElementById('messagesList').innerHTML = html;
+      document.getElementById('results').classList.add('visible');
+      document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function switchTab(el, idx, type) {
+      el.parentNode.querySelectorAll('.msg-tab').forEach(function(t){t.classList.remove('active');});
+      el.classList.add('active');
+      var m = allMessages[idx];
+      if (type === 'email') {
+        document.getElementById('subj-'+idx).textContent = 'Subject: ' + m.email_subject;
+        document.getElementById('subj-'+idx).style.display = '';
+        document.getElementById('content-'+idx).textContent = m.email_body;
+      } else {
+        document.getElementById('subj-'+idx).style.display = 'none';
+        document.getElementById('content-'+idx).textContent = m.linkedin_msg;
+      }
+    }
+
+    function copyMsg(idx) {
+      var m = allMessages[idx];
+      var subj = document.getElementById('subj-'+idx);
+      var content = document.getElementById('content-'+idx).textContent;
+      var text = subj.style.display !== 'none' ? 'Subject: ' + m.email_subject + '\n\n' + content : content;
+      navigator.clipboard.writeText(text).then(function() {
+        var btn = document.querySelectorAll('.copy-msg')[idx];
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = 'Copy message'; }, 1500);
+      });
+    }
+
+    function exportAll() {
+      var csv = 'Name,Company,Priority,Email Subject,Email Body,LinkedIn Message\n';
+      allMessages.forEach(function(m) {
+        csv += [m.name,m.company,m.priority,m.email_subject,m.email_body,m.linkedin_msg].map(function(v){return '"'+String(v||'').replace(/"/g,'""')+'"';}).join(',')+'\n';
+      });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+      a.download = 'post-show-outreach.csv';
+      a.click();
+    }
+  </script>
+</body>
+</html>

@@ -24,6 +24,8 @@
 | [Budget Planner](https://lensmorofficial.github.io/trade-show-tools/budget-planner/) | Plan exhibition budgets with industry benchmarks across 8 categories | Live |
 | [Checklist Generator](https://lensmorofficial.github.io/trade-show-tools/checklist-generator/) | Generate time-based pre-show checklists with interactive tasks | Live |
 | [ICP Target Matcher](https://lensmorofficial.github.io/trade-show-tools/icp-matcher/) | AI-powered exhibitor list scoring with ice-breaker pitch generation (BYOK) | Live |
+| [Badge Qualifier](https://lensmorofficial.github.io/trade-show-tools/badge-qualifier/) | Snap a badge photo, get instant AI lead qualification with CRM-ready data (BYOK) | Live |
+| [Outreach Generator](https://lensmorofficial.github.io/trade-show-tools/outreach-generator/) | Generate personalized post-show follow-up emails and LinkedIn messages (BYOK) | Live |
 
 ## ROI Calculator
 
