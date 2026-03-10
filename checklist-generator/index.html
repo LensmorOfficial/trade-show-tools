@@ -382,12 +382,37 @@
   </div>
 
   <script>
-    // Set default date to 3 months from now
-    var d = new Date();
-    d.setMonth(d.getMonth() + 3);
-    document.getElementById('showDate').value = d.toISOString().split('T')[0];
+    // Load saved state or set default date
+    function saveChecklistState() {
+      try { localStorage.setItem('checklist-gen', JSON.stringify({
+        showDate: document.getElementById('showDate').value,
+        showName: document.getElementById('showName').value,
+        exhibitorType: document.getElementById('exhibitorType').value,
+        focus: document.getElementById('focus').value
+      })); } catch(e) {}
+    }
 
-    var phaseColors = ['#f87171','#fb923c','#fbbf24','#34d399','#38bdf8','#6b75ff','#a78bfa'];
+    function loadChecklistState() {
+      try {
+        var s = JSON.parse(localStorage.getItem('checklist-gen'));
+        if (!s) return false;
+        if (s.showDate) document.getElementById('showDate').value = s.showDate;
+        if (s.showName) document.getElementById('showName').value = s.showName;
+        if (s.exhibitorType) document.getElementById('exhibitorType').value = s.exhibitorType;
+        if (s.focus) document.getElementById('focus').value = s.focus;
+        return true;
+      } catch(e) { return false; }
+    }
+
+    if (!loadChecklistState()) {
+      var d = new Date();
+      d.setMonth(d.getMonth() + 3);
+      document.getElementById('showDate').value = d.toISOString().split('T')[0];
+    }
+
+    document.querySelectorAll('input, select').forEach(function(el) { el.addEventListener('change', saveChecklistState); });
+
+    var phaseColors = ['#f87171','#fb923c','#fbbf24','#34d399','#38bdf8','#6b75ff','#a78bfa','#f472b6','#fb923c'];
 
     function getDaysBetween(a, b) {
       return Math.round((b - a) / (1000 * 60 * 60 * 24));
@@ -461,6 +486,25 @@
             'Post live updates on social media',
             'Debrief team at end of each day'
           ]
+        },
+        {
+          offset: 1, name: 'Post-Show (Day 1-3)', tasks: [
+            'Send same-day thank-you emails to hot leads',
+            'Export and clean all captured lead data',
+            'Debrief meeting: what worked, what to improve',
+            'Collect and organize business cards and notes',
+            'Post event recap on social media with photos'
+          ]
+        },
+        {
+          offset: 14, name: 'Follow-Up (Week 2-4)', tasks: [
+            'Send personalized follow-up emails to all leads',
+            'Schedule demos or calls with qualified prospects',
+            'Update CRM with lead scores and next actions',
+            'Calculate actual ROI vs. projected ROI',
+            'Write internal post-show report with recommendations',
+            'Archive booth materials and document improvements for next show'
+          ]
         }
       ];
 
@@ -482,22 +526,30 @@
         phases[2].tasks.push('Set up CRM integration for real-time lead sync');
         phases[4].tasks.push('Prepare post-show follow-up email sequences');
         phases[6].tasks.push('Qualify and tag leads by priority before leaving venue');
+        phases[7].tasks.push('Segment leads into tiers: hot, warm, cold');
+        phases[8].tasks.push('Track lead-to-opportunity conversion rate at 30/60/90 days');
       }
       if (focus === 'brand') {
         phases[1].tasks.push('Design eye-catching booth activation or photo opportunity');
         phases[3].tasks.push('Pitch press releases to industry media');
         phases[4].tasks.push('Prepare branded merchandise and premium giveaways');
+        phases[7].tasks.push('Compile media mentions and press coverage');
+        phases[8].tasks.push('Measure social media reach and engagement from event content');
       }
       if (focus === 'launch') {
         phases[1].tasks.push('Prepare product demo and launch presentation');
         phases[3].tasks.push('Schedule press briefings and analyst meetings');
         phases[4].tasks.push('Create launch-specific landing page and QR codes');
         phases[5].tasks.push('Embargo check: align press release timing with show schedule');
+        phases[7].tasks.push('Send launch recap and demo video to all booth visitors');
+        phases[8].tasks.push('Collect and analyze product feedback from show conversations');
       }
       if (focus === 'network') {
         phases[2].tasks.push('Research key attendees on LinkedIn and plan outreach');
         phases[3].tasks.push('RSVP to exhibitor dinners and networking events');
         phases[4].tasks.push('Prepare one-pager for potential partners');
+        phases[7].tasks.push('Send LinkedIn connection requests with personalized notes');
+        phases[8].tasks.push('Schedule follow-up meetings with top partnership prospects');
       }
 
       return phases;
