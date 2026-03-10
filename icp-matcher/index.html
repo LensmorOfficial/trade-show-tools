@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ICP Target Matcher — AI-Powered Exhibitor List Scanner</title>
+  <meta name="description" content="Upload a trade show exhibitor list, describe your ideal customer, and let AI score every company for ICP fit. Get a must-visit target list with personalized ice-breaker pitches.">
+  <meta name="keywords" content="trade show target list, exhibitor matching, ICP scoring, trade show lead prioritization, exhibitor intelligence">
+  <link rel="canonical" href="https://lensmorofficial.github.io/trade-show-tools/icp-matcher/">
+  <meta property="og:title" content="ICP Target Matcher — AI-Powered Exhibitor List Scanner">
+  <meta property="og:description" content="Upload an exhibitor list, describe your ICP, and get AI-scored target accounts with ice-breaker pitches.">
+  <meta property="og:type" content="website">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "ICP Target Matcher",
+    "description": "AI-powered tool to score trade show exhibitor lists against your ideal customer profile and generate personalized outreach pitches.",
+    "url": "https://lensmorofficial.github.io/trade-show-tools/icp-matcher/",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "Lensmor", "url": "https://www.lensmor.com" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #6b75ff;
+      --primary-hover: #8189ff;
+      --green: #34d399;
+      --red: #f87171;
+      --amber: #fbbf24;
+      --bg: #0c0c12;
+      --bg-card: #1a1a24;
+      --bg-input: #0c0c12;
+      --stroke: #1f2033;
+      --text: #ffffff;
+      --text-secondary: #a7a7a8;
+      --text-dim: #6b6b6c;
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
+
+    body {
+      font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      letter-spacing: -0.015em;
+      min-height: 100vh;
+    }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.25rem; }
+
+    header { text-align: center; margin-bottom: 2.5rem; }
+    header h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.15; }
+    header p { color: var(--text-secondary); font-size: 1rem; max-width: 560px; margin: 0 auto; }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card h2 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--stroke);
+    }
+
+    label { font-size: 0.875rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 0.2rem; }
+    .hint { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.4rem; }
+
+    input[type="text"], input[type="password"], textarea, select {
+      width: 100%;
+      padding: 0.625rem 0.75rem;
+      background: var(--bg-input);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+      letter-spacing: -0.015em;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    textarea { resize: vertical; min-height: 80px; }
+    select { cursor: pointer; }
+    select option { background: var(--bg-card); color: var(--text); }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(107, 117, 255, 0.15);
+    }
+
+    .form-row { margin-bottom: 1rem; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.5rem; }
+    }
+
+    /* Drop zone */
+    .drop-zone {
+      border: 2px dashed var(--stroke);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 1rem;
+    }
+
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: var(--primary);
+      background: rgba(107, 117, 255, 0.04);
+    }
+
+    .drop-zone .dz-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .drop-zone .dz-text { font-size: 0.875rem; color: var(--text-secondary); }
+    .drop-zone .dz-hint { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem; }
+    .drop-zone.has-file { border-color: var(--green); border-style: solid; }
+    .drop-zone.has-file .dz-icon { color: var(--green); }
+
+    #fileInput { display: none; }
+
+    .preview-info {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      padding: 0.75rem;
+      background: var(--bg);
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .preview-info.visible { display: block; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 0.75rem 1.5rem;
+      background: var(--primary);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: -0.015em;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn:hover { background: var(--primary-hover); }
+    .btn:active { transform: scale(0.99); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--stroke);
+      color: var(--text-secondary);
+      margin-top: 1rem;
+    }
+
+    .btn-outline:hover { border-color: var(--primary); color: var(--text); background: transparent; }
+
+    /* Progress */
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--stroke);
+      border-radius: 2px;
+      margin: 1rem 0;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress-bar.visible { display: block; }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    .status-text {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-align: center;
+      margin-bottom: 0.5rem;
+      display: none;
+    }
+
+    .status-text.visible { display: block; }
+
+    /* Results table */
+    #results { display: none; }
+    #results.visible { display: block; }
+
+    .results-summary {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .summary-stat {
+      flex: 1;
+      min-width: 120px;
+      padding: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      text-align: center;
+    }
+
+    .summary-stat .val { font-size: 1.25rem; font-weight: 700; }
+    .summary-stat .lbl { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-dim); margin-top: 0.15rem; }
+
+    .result-row {
+      display: grid;
+      grid-template-columns: 50px 1fr 60px;
+      gap: 0.75rem;
+      align-items: start;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--stroke);
+      font-size: 0.85rem;
+    }
+
+    .result-row:last-child { border-bottom: none; }
+
+    .score-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .score-high { background: rgba(52, 211, 153, 0.15); color: var(--green); border: 1px solid rgba(52, 211, 153, 0.3); }
+    .score-mid { background: rgba(251, 191, 36, 0.1); color: var(--amber); border: 1px solid rgba(251, 191, 36, 0.2); }
+    .score-low { background: rgba(107, 107, 108, 0.1); color: var(--text-dim); border: 1px solid var(--stroke); }
+
+    .result-info .company-name { font-weight: 600; color: var(--text); margin-bottom: 0.2rem; }
+    .result-info .match-reason { color: var(--text-secondary); font-size: 0.8rem; line-height: 1.4; }
+    .result-info .ice-breaker {
+      margin-top: 0.5rem;
+      padding: 0.6rem 0.75rem;
+      background: rgba(107, 117, 255, 0.06);
+      border-left: 2px solid var(--primary);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .result-info .ice-breaker strong { color: var(--primary); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.03em; }
+
+    .expand-btn {
+      background: none;
+      border: 1px solid var(--stroke);
+      color: var(--text-dim);
+      font-size: 0.7rem;
+      padding: 0.3rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .expand-btn:hover { border-color: var(--primary); color: var(--text); }
+
+    .key-note {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--stroke);
+    }
+
+    footer p { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; }
+    footer a { color: var(--primary); text-decoration: none; transition: color 0.15s; }
+    footer a:hover { color: var(--primary-hover); }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1.25rem;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .back-link:hover { color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../" class="back-link">&larr; All Tools</a>
+
+    <header>
+      <h1>ICP Target Matcher</h1>
+      <p>Upload a trade show exhibitor list, describe your ideal customer, and let AI score every company for fit — with ice-breaker pitches for your top targets.</p>
+    </header>
+
+    <!-- Step 1: API Key -->
+    <div class="card">
+      <h2>1. Connect AI</h2>
+      <div class="form-row">
+        <label for="apiKey">Anthropic API Key</label>
+        <div class="hint">Your key stays in your browser. Never sent to any server except Anthropic.</div>
+        <input type="password" id="apiKey" placeholder="sk-ant-...">
+        <div class="key-note">Get a key at <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener" style="color:var(--primary)">console.anthropic.com</a>. Typical cost: ~$0.02 per 100 companies analyzed.</div>
+      </div>
+    </div>
+
+    <!-- Step 2: Upload -->
+    <div class="card">
+      <h2>2. Upload Exhibitor List</h2>
+      <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <div class="dz-icon">+</div>
+        <div class="dz-text">Drop a CSV file here or click to browse</div>
+        <div class="dz-hint">Supports: .csv files with company names. Other columns (industry, description, booth#) improve accuracy.</div>
+      </div>
+      <input type="file" id="fileInput" accept=".csv">
+      <div class="preview-info" id="previewInfo"></div>
+
+      <div class="form-row" id="columnMapRow" style="display:none;">
+        <label>Column Mapping</label>
+        <div class="hint">Tell us which column contains company names. Other columns are optional but improve matching.</div>
+        <div class="form-grid">
+          <div>
+            <label style="font-size:0.75rem;color:var(--text-dim)">Company Name *</label>
+            <select id="colName"></select>
+          </div>
+          <div>
+            <label style="font-size:0.75rem;color:var(--text-dim)">Description / Industry</label>
+            <select id="colDesc"><option value="">— None —</option></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: ICP -->
+    <div class="card">
+      <h2>3. Describe Your Ideal Customer</h2>
+      <div class="form-row">
+        <label for="icpText">ICP Description</label>
+        <div class="hint">Be specific: what you sell, who buys it, what industry, what size company.</div>
+        <textarea id="icpText" placeholder="Example: We sell warehouse robotics and automated picking systems to enterprise logistics companies (500+ employees) in North America and Europe. Our buyers are VP of Operations or Supply Chain Directors at companies doing $100M+ revenue."></textarea>
+      </div>
+      <div class="form-row">
+        <label for="topN">Show Top Results</label>
+        <select id="topN">
+          <option value="10">Top 10</option>
+          <option value="20">Top 20</option>
+          <option value="30" selected>Top 30</option>
+          <option value="50">Top 50</option>
+          <option value="0">All (scored)</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn" id="runBtn" onclick="runMatcher()">Analyze Exhibitor List</button>
+
+    <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="status-text" id="statusText"></div>
+
+    <!-- Results -->
+    <div id="results">
+      <div class="card">
+        <h2>Target Accounts</h2>
+        <div class="results-summary" id="resultsSummary"></div>
+        <div id="resultsList"></div>
+        <button class="btn btn-outline" onclick="exportCSV()">Export as CSV</button>
+        <button class="btn btn-outline" onclick="copyTargets()">Copy Top Targets</button>
+      </div>
+    </div>
+
+    <footer>
+      <p>
+        Built by <a href="https://www.lensmor.com/?utm_source=github&utm_medium=tool&utm_campaign=icp-matcher" target="_blank" rel="noopener">Lensmor</a> &mdash; AI-powered trade show intelligence for B2B teams.
+      </p>
+      <p>
+        <a href="https://github.com/LensmorOfficial/trade-show-tools" target="_blank" rel="noopener">View on GitHub</a>
+        &middot;
+        <a href="../roi-calculator/">ROI Calculator</a>
+        &middot;
+        <a href="../checklist-generator/">Checklist Generator</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    var csvData = [];
+    var csvHeaders = [];
+    var results = [];
+
+    // Load saved API key
+    try {
+      var savedKey = localStorage.getItem('icp-api-key');
+      if (savedKey) document.getElementById('apiKey').value = savedKey;
+      var savedICP = localStorage.getItem('icp-text');
+      if (savedICP) document.getElementById('icpText').value = savedICP;
+    } catch(e) {}
+
+    // Save on change
+    document.getElementById('apiKey').addEventListener('change', function() {
+      try { localStorage.setItem('icp-api-key', this.value); } catch(e) {}
+    });
+    document.getElementById('icpText').addEventListener('change', function() {
+      try { localStorage.setItem('icp-text', this.value); } catch(e) {}
+    });
+
+    // File handling
+    var dz = document.getElementById('dropZone');
+    var fi = document.getElementById('fileInput');
+
+    dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragleave', function() { dz.classList.remove('drag-over'); });
+    dz.addEventListener('drop', function(e) { e.preventDefault(); dz.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0]); });
+    fi.addEventListener('change', function() { if (fi.files[0]) handleFile(fi.files[0]); });
+
+    function parseCSV(text) {
+      var lines = text.split(/\r?\n/).filter(function(l) { return l.trim(); });
+      if (lines.length < 2) return { headers: [], rows: [] };
+      var headers = parseCSVLine(lines[0]);
+      var rows = [];
+      for (var i = 1; i < lines.length; i++) {
+        var vals = parseCSVLine(lines[i]);
+        if (vals.length >= headers.length * 0.5) rows.push(vals);
+      }
+      return { headers: headers, rows: rows };
+    }
+
+    function parseCSVLine(line) {
+      var result = [];
+      var current = '';
+      var inQuotes = false;
+      for (var i = 0; i < line.length; i++) {
+        var c = line[i];
+        if (c === '"') { inQuotes = !inQuotes; }
+        else if (c === ',' && !inQuotes) { result.push(current.trim()); current = ''; }
+        else { current += c; }
+      }
+      result.push(current.trim());
+      return result;
+    }
+
+    function handleFile(file) {
+      if (!file || !file.name.endsWith('.csv')) {
+        alert('Please upload a .csv file');
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var parsed = parseCSV(e.target.result);
+        csvHeaders = parsed.headers;
+        csvData = parsed.rows;
+
+        dz.classList.add('has-file');
+        dz.querySelector('.dz-text').textContent = file.name;
+        dz.querySelector('.dz-hint').textContent = csvData.length + ' rows, ' + csvHeaders.length + ' columns';
+
+        var info = document.getElementById('previewInfo');
+        info.classList.add('visible');
+        info.textContent = 'Columns: ' + csvHeaders.join(', ') + ' | Preview: ' + csvData.slice(0, 2).map(function(r) { return r[0]; }).join(', ') + '...';
+
+        // Populate column selectors
+        var colName = document.getElementById('colName');
+        var colDesc = document.getElementById('colDesc');
+        colName.innerHTML = '';
+        colDesc.innerHTML = '<option value="">— None —</option>';
+
+        var nameGuess = 0;
+        var descGuess = -1;
+
+        csvHeaders.forEach(function(h, i) {
+          var opt1 = new Option(h, i);
+          var opt2 = new Option(h, i);
+          colName.add(opt1);
+          colDesc.add(opt2);
+          var hl = h.toLowerCase();
+          if (hl.includes('company') || hl.includes('name') || hl.includes('exhibitor') || hl.includes('organization') || hl.includes('org')) nameGuess = i;
+          if (hl.includes('desc') || hl.includes('industry') || hl.includes('sector') || hl.includes('category') || hl.includes('product') || hl.includes('about')) descGuess = i;
+        });
+
+        colName.value = nameGuess;
+        if (descGuess >= 0) colDesc.value = descGuess;
+
+        document.getElementById('columnMapRow').style.display = 'block';
+      };
+      reader.readAsText(file);
+    }
+
+    async function runMatcher() {
+      var apiKey = document.getElementById('apiKey').value.trim();
+      if (!apiKey) { alert('Please enter your Anthropic API key'); return; }
+      if (csvData.length === 0) { alert('Please upload a CSV file first'); return; }
+      var icpText = document.getElementById('icpText').value.trim();
+      if (!icpText) { alert('Please describe your ideal customer profile'); return; }
+
+      var nameCol = parseInt(document.getElementById('colName').value);
+      var descCol = document.getElementById('colDesc').value;
+      descCol = descCol !== '' ? parseInt(descCol) : -1;
+
+      var topN = parseInt(document.getElementById('topN').value);
+
+      // Build company list
+      var companies = csvData.map(function(row, idx) {
+        var entry = { name: row[nameCol] || '', index: idx };
+        if (descCol >= 0 && row[descCol]) entry.desc = row[descCol];
+        // Include all other columns as context
+        var extra = [];
+        csvHeaders.forEach(function(h, i) {
+          if (i !== nameCol && i !== descCol && row[i]) extra.push(h + ': ' + row[i]);
+        });
+        if (extra.length) entry.extra = extra.join('; ');
+        return entry;
+      }).filter(function(c) { return c.name; });
+
+      if (companies.length === 0) { alert('No company names found in the selected column'); return; }
+
+      var btn = document.getElementById('runBtn');
+      btn.disabled = true;
+      btn.textContent = 'Analyzing...';
+
+      var pb = document.getElementById('progressBar');
+      var pf = document.getElementById('progressFill');
+      var st = document.getElementById('statusText');
+      pb.classList.add('visible');
+      st.classList.add('visible');
+
+      results = [];
+      var BATCH = 25;
+      var batches = [];
+      for (var i = 0; i < companies.length; i += BATCH) {
+        batches.push(companies.slice(i, i + BATCH));
+      }
+
+      for (var b = 0; b < batches.length; b++) {
+        st.textContent = 'Analyzing batch ' + (b + 1) + ' of ' + batches.length + ' (' + ((b / batches.length) * 100).toFixed(0) + '%)...';
+        pf.style.width = ((b / batches.length) * 100) + '%';
+
+        var batch = batches[b];
+        var companyList = batch.map(function(c, i) {
+          var line = (i + 1) + '. ' + c.name;
+          if (c.desc) line += ' | ' + c.desc;
+          if (c.extra) line += ' | ' + c.extra;
+          return line;
+        }).join('\n');
+
+        var prompt = 'You are an expert B2B sales analyst. Score each company below for ICP (Ideal Customer Profile) match.\n\n' +
+          'ICP DESCRIPTION:\n' + icpText + '\n\n' +
+          'COMPANIES TO SCORE:\n' + companyList + '\n\n' +
+          'For each company, respond with ONLY a JSON array. Each element must have:\n' +
+          '- "name": company name exactly as given\n' +
+          '- "score": integer 0-100 (100 = perfect ICP match)\n' +
+          '- "reason": 1 sentence explaining the score\n' +
+          '- "pitch": For companies scoring 60+, a 2-sentence LinkedIn ice-breaker message. For others, empty string.\n\n' +
+          'Respond with ONLY valid JSON array, no markdown, no explanation.';
+
+        try {
+          var resp = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': apiKey,
+              'anthropic-version': '2023-06-01',
+              'anthropic-dangerous-direct-browser-access': 'true'
+            },
+            body: JSON.stringify({
+              model: 'claude-sonnet-4-20250514',
+              max_tokens: 4096,
+              messages: [{ role: 'user', content: prompt }]
+            })
+          });
+
+          if (!resp.ok) {
+            var err = await resp.json();
+            throw new Error(err.error?.message || 'API error ' + resp.status);
+          }
+
+          var data = await resp.json();
+          var text = data.content[0].text;
+          // Extract JSON from response
+          var jsonMatch = text.match(/\[[\s\S]*\]/);
+          if (jsonMatch) {
+            var scored = JSON.parse(jsonMatch[0]);
+            scored.forEach(function(s) {
+              var orig = batch.find(function(c) { return c.name === s.name; });
+              results.push({
+                name: s.name,
+                score: s.score || 0,
+                reason: s.reason || '',
+                pitch: s.pitch || '',
+                index: orig ? orig.index : -1
+              });
+            });
+          }
+        } catch (e) {
+          st.textContent = 'Error: ' + e.message;
+          btn.disabled = false;
+          btn.textContent = 'Analyze Exhibitor List';
+          return;
+        }
+      }
+
+      pf.style.width = '100%';
+      st.textContent = 'Done! Analyzed ' + results.length + ' companies.';
+
+      // Sort by score descending
+      results.sort(function(a, b) { return b.score - a.score; });
+
+      // Render results
+      var displayResults = topN > 0 ? results.slice(0, topN) : results;
+      var hot = results.filter(function(r) { return r.score >= 75; }).length;
+      var warm = results.filter(function(r) { return r.score >= 50 && r.score < 75; }).length;
+      var cold = results.filter(function(r) { return r.score < 50; }).length;
+
+      document.getElementById('resultsSummary').innerHTML =
+        '<div class="summary-stat"><div class="val" style="color:var(--text)">' + results.length + '</div><div class="lbl">Total Analyzed</div></div>' +
+        '<div class="summary-stat"><div class="val" style="color:var(--green)">' + hot + '</div><div class="lbl">Hot (75+)</div></div>' +
+        '<div class="summary-stat"><div class="val" style="color:var(--amber)">' + warm + '</div><div class="lbl">Warm (50-74)</div></div>' +
+        '<div class="summary-stat"><div class="val" style="color:var(--text-dim)">' + cold + '</div><div class="lbl">Cold (&lt;50)</div></div>';
+
+      var html = '';
+      displayResults.forEach(function(r) {
+        var scoreClass = r.score >= 75 ? 'score-high' : r.score >= 50 ? 'score-mid' : 'score-low';
+        html += '<div class="result-row">';
+        html += '<div class="score-badge ' + scoreClass + '">' + r.score + '</div>';
+        html += '<div class="result-info">';
+        html += '<div class="company-name">' + escHtml(r.name) + '</div>';
+        html += '<div class="match-reason">' + escHtml(r.reason) + '</div>';
+        if (r.pitch) {
+          html += '<div class="ice-breaker"><strong>Ice-breaker</strong><br>' + escHtml(r.pitch) + '</div>';
+        }
+        html += '</div>';
+        html += '<div></div>';
+        html += '</div>';
+      });
+
+      document.getElementById('resultsList').innerHTML = html;
+      document.getElementById('results').classList.add('visible');
+      document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      btn.disabled = false;
+      btn.textContent = 'Analyze Exhibitor List';
+    }
+
+    function escHtml(s) {
+      var d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function exportCSV() {
+      var csv = 'Company,Score,Reason,Ice-Breaker Pitch\n';
+      results.forEach(function(r) {
+        csv += '"' + r.name.replace(/"/g, '""') + '",' + r.score + ',"' + r.reason.replace(/"/g, '""') + '","' + r.pitch.replace(/"/g, '""') + '"\n';
+      });
+      var blob = new Blob([csv], { type: 'text/csv' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'icp-target-list.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function copyTargets() {
+      var top = results.filter(function(r) { return r.score >= 60; });
+      var text = 'Must-Visit Target Accounts\n==========================\n\n';
+      top.forEach(function(r, i) {
+        text += (i + 1) + '. ' + r.name + ' (Score: ' + r.score + ')\n';
+        text += '   ' + r.reason + '\n';
+        if (r.pitch) text += '   Pitch: ' + r.pitch + '\n';
+        text += '\n';
+      });
+      text += '---\nGenerated with Lensmor ICP Target Matcher\nhttps://lensmorofficial.github.io/trade-show-tools/icp-matcher/\n';
+      navigator.clipboard.writeText(text).then(function() {
+        var btn = document.querySelector('[onclick="copyTargets()"]');
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = 'Copy Top Targets'; }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>
