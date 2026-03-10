@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competitor Radar — Trade Show Intelligence Logger</title>
+  <meta name="description" content="Discreetly capture competitor intelligence at trade shows. Snap photos of competitor booths, add voice notes, and auto-generate a competitive battlecard report.">
+  <link rel="canonical" href="https://lensmorofficial.github.io/trade-show-tools/competitor-radar/">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Notes">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--primary:#6b75ff;--primary-hover:#8189ff;--green:#34d399;--red:#f87171;--amber:#fbbf24;--bg:#0c0c12;--bg-card:#1a1a24;--bg-input:#0c0c12;--stroke:#1f2033;--text:#fff;--text-secondary:#a7a7a8;--text-dim:#6b6b6c;--radius:10px;--radius-lg:14px}
+    body{font-family:'Inter Tight',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;letter-spacing:-.015em;min-height:100vh}
+    .container{max-width:640px;margin:0 auto;padding:2rem 1.25rem}
+    header{text-align:center;margin-bottom:2rem}
+    header h1{font-size:1.75rem;font-weight:700;margin-bottom:.5rem}
+    header p{color:var(--text-secondary);font-size:.9rem}
+    .card{background:var(--bg-card);border:1px solid var(--stroke);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.25rem}
+    .card h2{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--stroke)}
+    label{font-size:.85rem;font-weight:500;display:block;margin-bottom:.2rem}
+    .hint{font-size:.75rem;color:var(--text-dim);margin-bottom:.4rem}
+    input[type="password"],input[type="text"],textarea,select{width:100%;padding:.6rem .75rem;background:var(--bg-input);border:1px solid var(--stroke);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:.85rem}
+    textarea{resize:vertical;min-height:60px}
+    select option{background:var(--bg-card)}
+    input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(107,117,255,.15)}
+    .form-row{margin-bottom:1rem}
+
+    /* Watchlist */
+    .watchlist{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem}
+    .watch-tag{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .6rem;background:rgba(107,117,255,.08);border:1px solid rgba(107,117,255,.2);border-radius:20px;font-size:.75rem;color:var(--primary)}
+    .watch-tag .remove{cursor:pointer;opacity:.5;font-size:.9rem}
+    .watch-tag .remove:hover{opacity:1}
+    .add-row{display:flex;gap:.4rem}
+    .add-row input{flex:1}
+    .add-row button{padding:.5rem .75rem;background:var(--primary);color:#fff;border:none;border-radius:var(--radius);cursor:pointer;font-family:inherit;font-size:.8rem;white-space:nowrap}
+
+    /* Quick capture */
+    .capture-row{display:flex;gap:.5rem;margin-bottom:.75rem}
+    .cap-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem;padding:1rem .5rem;background:var(--bg);border:2px dashed var(--stroke);border-radius:var(--radius-lg);cursor:pointer;color:var(--text-secondary);font-size:.75rem;font-family:inherit;transition:border-color .2s}
+    .cap-btn:hover{border-color:var(--primary)}
+    .cap-btn.has-data{border-color:var(--green);border-style:solid}
+    .cap-btn .icon{font-size:1.3rem}
+    .cap-btn.has-data .icon{color:var(--green)}
+    #photoInput,#galleryInput{display:none}
+    .preview-img{max-width:100%;max-height:160px;border-radius:var(--radius);margin-bottom:.5rem;display:none}
+    .preview-img.visible{display:block}
+
+    .voice-row{display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem}
+    .rec-btn{width:40px;height:40px;border-radius:50%;border:2px solid var(--stroke);background:var(--bg);color:var(--text-secondary);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+    .rec-btn.recording{border-color:var(--red);background:rgba(248,113,113,.1);color:var(--red);animation:pulse 1s infinite}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+    .voice-st{font-size:.75rem;color:var(--text-dim)}
+
+    .btn{display:flex;align-items:center;justify-content:center;width:100%;padding:.75rem;background:var(--primary);color:#fff;font-family:inherit;font-size:.875rem;font-weight:500;border:none;border-radius:var(--radius);cursor:pointer;transition:background .2s}
+    .btn:hover{background:var(--primary-hover)}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .btn-outline{background:transparent;border:1px solid var(--stroke);color:var(--text-secondary);margin-top:.75rem}
+    .btn-outline:hover{border-color:var(--primary);color:var(--text);background:transparent}
+    .btn-red{background:transparent;border:1px solid rgba(248,113,113,.3);color:var(--red)}
+    .btn-red:hover{background:rgba(248,113,113,.08)}
+    .btn-sm{padding:.4rem .6rem;font-size:.75rem;width:auto}
+
+    /* Intel feed */
+    .intel-entry{padding:1rem;background:var(--bg);border:1px solid var(--stroke);border-radius:var(--radius-lg);margin-bottom:.75rem}
+    .intel-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+    .intel-company{font-weight:600;font-size:.9rem;flex:1}
+    .intel-time{font-size:.7rem;color:var(--text-dim)}
+    .intel-thumb{width:60px;height:60px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--stroke);float:right;margin:0 0 .5rem .5rem}
+    .intel-analysis{font-size:.8rem;color:var(--text-secondary);line-height:1.6}
+    .intel-analysis strong{color:var(--text)}
+    .intel-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.5rem}
+    .intel-tag{font-size:.65rem;padding:.15rem .4rem;border-radius:3px;background:rgba(107,117,255,.08);color:var(--primary)}
+
+    /* Battlecard */
+    .battlecard{display:none}
+    .battlecard.visible{display:block}
+    .bc-section{margin-bottom:1.25rem}
+    .bc-section h3{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--amber);margin-bottom:.5rem}
+    .bc-competitor{padding:.75rem;background:var(--bg);border-left:3px solid var(--primary);border-radius:0 var(--radius) var(--radius) 0;margin-bottom:.5rem;font-size:.8rem;color:var(--text-secondary);line-height:1.6}
+    .bc-competitor strong{color:var(--text)}
+    .bc-competitor .comp-name{color:var(--primary);font-weight:600;font-size:.9rem}
+
+    .key-note{font-size:.7rem;color:var(--text-dim);margin-top:.5rem;line-height:1.5}
+    footer{text-align:center;margin-top:2rem;padding-top:1rem;border-top:1px solid var(--stroke)}
+    footer p{font-size:.8rem;color:var(--text-dim);margin-bottom:.5rem}
+    footer a{color:var(--primary);text-decoration:none}
+    .back-link{display:inline-block;margin-bottom:1rem;font-size:.8rem;color:var(--text-dim);text-decoration:none}
+    .back-link:hover{color:var(--primary)}
+    .empty-state{text-align:center;padding:2rem;color:var(--text-dim);font-size:.85rem}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../" class="back-link">&larr; All Tools</a>
+    <header>
+      <h1>Competitor Radar</h1>
+      <p>Capture competitor intel on the show floor. Auto-generate a battlecard at the end of the day.</p>
+    </header>
+
+    <!-- Setup -->
+    <div class="card" id="setupCard">
+      <h2>Setup</h2>
+      <div class="form-row">
+        <label>API Key</label>
+        <input type="password" id="apiKey" placeholder="sk-ant-...">
+        <div class="key-note"><a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--primary)">Get one</a> &middot; Stored locally only</div>
+      </div>
+      <div class="form-row">
+        <label>Show Name</label>
+        <input type="text" id="showName" placeholder="e.g. MEDICA 2026">
+      </div>
+      <div class="form-row">
+        <label>Your Industry / Product</label>
+        <div class="hint">Helps AI contextualize competitor moves against your positioning</div>
+        <input type="text" id="yourContext" placeholder="e.g. We sell warehouse robotics for enterprise logistics">
+      </div>
+      <div class="form-row">
+        <label>Competitor Watchlist</label>
+        <div class="hint">Add the companies you want to monitor</div>
+        <div class="watchlist" id="watchlist"></div>
+        <div class="add-row">
+          <input type="text" id="addCompInput" placeholder="Company name" onkeydown="if(event.key==='Enter')addCompetitor()">
+          <button onclick="addCompetitor()">+ Add</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Capture -->
+    <div class="card">
+      <h2>Quick Capture</h2>
+      <div class="form-row">
+        <label>Which Competitor?</label>
+        <select id="targetCompany">
+          <option value="">Select from watchlist or type below</option>
+        </select>
+        <input type="text" id="customCompany" placeholder="Or type a new company name" style="margin-top:.4rem">
+      </div>
+      <div class="capture-row">
+        <label class="cap-btn" id="cameraBtn">
+          <span class="icon">&#128247;</span><span>Photo</span>
+          <input type="file" id="photoInput" accept="image/*" capture="environment">
+        </label>
+        <label class="cap-btn" id="galleryBtn">
+          <span class="icon">&#128193;</span><span>Gallery</span>
+          <input type="file" id="galleryInput" accept="image/*">
+        </label>
+      </div>
+      <img id="previewImg" class="preview-img">
+      <div class="voice-row">
+        <button class="rec-btn" id="recBtn" onclick="toggleRec()">&#9679;</button>
+        <span class="voice-st" id="voiceSt">Tap to dictate observations</span>
+      </div>
+      <textarea id="notesText" placeholder="Observations: pricing, new products, messaging, booth traffic, promotions..."></textarea>
+      <button class="btn" style="margin-top:.75rem" onclick="logIntel()">Log Intel</button>
+    </div>
+
+    <!-- Intel Feed -->
+    <div class="card">
+      <h2>Intel Feed (<span id="intelCount">0</span> entries)</h2>
+      <div id="intelFeed"><div class="empty-state">No intel captured yet. Start by snapping a competitor booth photo above.</div></div>
+    </div>
+
+    <!-- Battlecard -->
+    <button class="btn btn-outline" onclick="generateBattlecard()">Generate Battlecard Report</button>
+    <div class="progress-bar" id="progressBar" style="display:none"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="status-text" id="statusText" style="display:none"></div>
+
+    <div class="battlecard" id="battlecard">
+      <div class="card">
+        <h2>Competitive Intelligence Battlecard</h2>
+        <div id="battlecardContent"></div>
+        <div style="display:flex;gap:.5rem;margin-top:1rem">
+          <button class="btn btn-outline btn-sm" style="flex:1" onclick="copyBattlecard()">Copy Report</button>
+          <button class="btn btn-outline btn-sm" style="flex:1" onclick="exportIntel()">Export All (CSV)</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-red btn-sm" style="margin-top:1rem" onclick="if(confirm('Clear all intel for this session?')){intelData=[];saveData();renderFeed();document.getElementById('battlecard').classList.remove('visible')}">Clear Session</button>
+
+    <footer>
+      <p>Built by <a href="https://www.lensmor.com/?utm_source=github&utm_medium=tool&utm_campaign=competitor-radar" target="_blank">Lensmor</a></p>
+      <p><a href="https://github.com/LensmorOfficial/trade-show-tools" target="_blank">GitHub</a> &middot; <a href="../badge-qualifier/">Badge Qualifier</a> &middot; <a href="../icp-matcher/">ICP Matcher</a></p>
+    </footer>
+  </div>
+
+  <script>
+    let watchlist = [];
+    let intelData = [];
+    let imageBase64 = null;
+    let isRec = false;
+    let recognition = null;
+
+    // Load state
+    try {
+      const k = localStorage.getItem('cr-api-key'); if (k) document.getElementById('apiKey').value = k;
+      const sn = localStorage.getItem('cr-show'); if (sn) document.getElementById('showName').value = sn;
+      const ctx = localStorage.getItem('cr-context'); if (ctx) document.getElementById('yourContext').value = ctx;
+      const wl = localStorage.getItem('cr-watchlist'); if (wl) watchlist = JSON.parse(wl);
+      const id = localStorage.getItem('cr-intel'); if (id) intelData = JSON.parse(id);
+    } catch(e) {}
+
+    function saveData() {
+      try {
+        localStorage.setItem('cr-api-key', document.getElementById('apiKey').value);
+        localStorage.setItem('cr-show', document.getElementById('showName').value);
+        localStorage.setItem('cr-context', document.getElementById('yourContext').value);
+        localStorage.setItem('cr-watchlist', JSON.stringify(watchlist));
+        localStorage.setItem('cr-intel', JSON.stringify(intelData));
+      } catch(e) {}
+    }
+
+    document.querySelectorAll('#apiKey,#showName,#yourContext').forEach(el => el.addEventListener('change', saveData));
+
+    // Watchlist
+    function renderWatchlist() {
+      const wlEl = document.getElementById('watchlist');
+      wlEl.innerHTML = watchlist.map((c, i) =>
+        `<span class="watch-tag">${esc(c)} <span class="remove" onclick="watchlist.splice(${i},1);saveData();renderWatchlist()">x</span></span>`
+      ).join('');
+      const sel = document.getElementById('targetCompany');
+      sel.innerHTML = '<option value="">Select from watchlist</option>' + watchlist.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    }
+
+    function addCompetitor() {
+      const input = document.getElementById('addCompInput');
+      const name = input.value.trim();
+      if (name && !watchlist.includes(name)) {
+        watchlist.push(name);
+        saveData();
+        renderWatchlist();
+      }
+      input.value = '';
+    }
+
+    // Photo
+    document.getElementById('photoInput').addEventListener('change', handleImg);
+    document.getElementById('galleryInput').addEventListener('change', handleImg);
+
+    function handleImg(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const max = 1024;
+          let w = img.width, h = img.height;
+          if (w > max || h > max) { if (w > h) { h = h*max/w; w = max; } else { w = w*max/h; h = max; } }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          imageBase64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+          const prev = document.getElementById('previewImg');
+          prev.src = canvas.toDataURL('image/jpeg', 0.8);
+          prev.classList.add('visible');
+          e.target.closest('.cap-btn').classList.add('has-data');
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Voice
+    function toggleRec() {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        document.getElementById('voiceSt').textContent = 'Not supported. Type instead.'; return;
+      }
+      const btn = document.getElementById('recBtn');
+      if (isRec) { recognition.stop(); isRec = false; btn.classList.remove('recording'); return; }
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SR(); recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'en-US';
+      recognition.onresult = e => { let t = ''; for (let i = 0; i < e.results.length; i++) t += e.results[i][0].transcript; document.getElementById('notesText').value = t; };
+      recognition.onend = () => { btn.classList.remove('recording'); isRec = false; document.getElementById('voiceSt').textContent = 'Saved'; };
+      recognition.start(); isRec = true; btn.classList.add('recording'); document.getElementById('voiceSt').textContent = 'Listening...';
+    }
+
+    // Log intel
+    async function logIntel() {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      if (!apiKey) { alert('Please enter your API key'); return; }
+
+      const company = document.getElementById('targetCompany').value || document.getElementById('customCompany').value.trim();
+      if (!company) { alert('Please select or type a competitor name'); return; }
+      if (!imageBase64 && !document.getElementById('notesText').value.trim()) { alert('Please add a photo or notes'); return; }
+
+      const btn = document.querySelector('[onclick="logIntel()"]');
+      btn.disabled = true; btn.textContent = 'Analyzing...';
+
+      const notes = document.getElementById('notesText').value.trim();
+      const yourCtx = document.getElementById('yourContext').value;
+      const showName = document.getElementById('showName').value;
+
+      let prompt = `You are a competitive intelligence analyst at ${showName || 'a trade show'}. Analyze this competitor observation.\n\n`;
+      prompt += `COMPETITOR: ${company}\n`;
+      if (yourCtx) prompt += `OUR POSITIONING: ${yourCtx}\n`;
+      if (notes) prompt += `FIELD NOTES: ${notes}\n`;
+      prompt += `\nFrom the ${imageBase64 ? 'photo and ' : ''}notes, extract:\n`;
+      prompt += `1. Key marketing messages and positioning\n2. Products/services being showcased\n3. Pricing signals (discounts, offers, tiers)\n4. Booth traffic and engagement observations\n5. Threat assessment: what this means for us\n\n`;
+      prompt += `Respond with ONLY a JSON object:\n{\n`;
+      prompt += `  "marketing_message": "their core messaging/tagline",\n`;
+      prompt += `  "products": ["product 1", "product 2"],\n`;
+      prompt += `  "pricing_signals": "any pricing/offer info observed",\n`;
+      prompt += `  "booth_notes": "traffic, setup, engagement observations",\n`;
+      prompt += `  "threat_level": "high/medium/low",\n`;
+      prompt += `  "threat_assessment": "what this means for our business, 2 sentences",\n`;
+      prompt += `  "tags": ["tag1", "tag2"]\n}\nJSON only.`;
+
+      const content = [];
+      if (imageBase64) content.push({ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageBase64 } });
+      content.push({ type: 'text', text: prompt });
+
+      try {
+        const resp = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+          body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1024, messages: [{ role: 'user', content }] })
+        });
+        if (!resp.ok) { const err = await resp.json(); throw new Error(err.error?.message || 'API error'); }
+        const data = await resp.json();
+        const json = data.content[0].text.match(/\{[\s\S]*\}/);
+        if (!json) throw new Error('Could not parse response');
+
+        const analysis = JSON.parse(json[0]);
+        intelData.push({
+          company,
+          timestamp: new Date().toISOString(),
+          hasPhoto: !!imageBase64,
+          thumbData: imageBase64 ? document.getElementById('previewImg').src : null,
+          rawNotes: notes,
+          ...analysis
+        });
+        saveData();
+        renderFeed();
+
+        // Reset capture
+        imageBase64 = null;
+        document.getElementById('previewImg').classList.remove('visible');
+        document.getElementById('notesText').value = '';
+        document.getElementById('customCompany').value = '';
+        document.querySelectorAll('.cap-btn').forEach(b => b.classList.remove('has-data'));
+      } catch (e) { alert('Error: ' + e.message); }
+      btn.disabled = false; btn.textContent = 'Log Intel';
+    }
+
+    function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    function renderFeed() {
+      const feed = document.getElementById('intelFeed');
+      document.getElementById('intelCount').textContent = intelData.length;
+      if (intelData.length === 0) { feed.innerHTML = '<div class="empty-state">No intel captured yet.</div>'; return; }
+
+      feed.innerHTML = intelData.slice().reverse().map(e => {
+        const time = new Date(e.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        const threatColor = e.threat_level === 'high' ? 'var(--red)' : e.threat_level === 'medium' ? 'var(--amber)' : 'var(--text-dim)';
+        return `<div class="intel-entry">
+          <div class="intel-header">
+            <span class="intel-company">${esc(e.company)}</span>
+            <span style="font-size:.65rem;padding:.15rem .4rem;border-radius:3px;background:rgba(248,113,113,.08);color:${threatColor};text-transform:uppercase;font-weight:600">${e.threat_level || '?'}</span>
+            <span class="intel-time">${time}</span>
+          </div>
+          ${e.thumbData ? `<img src="${e.thumbData}" class="intel-thumb">` : ''}
+          <div class="intel-analysis">
+            <strong>Message:</strong> ${esc(e.marketing_message || '—')}<br>
+            <strong>Products:</strong> ${(e.products || []).map(p => esc(p)).join(', ') || '—'}<br>
+            <strong>Pricing:</strong> ${esc(e.pricing_signals || '—')}<br>
+            <strong>Assessment:</strong> ${esc(e.threat_assessment || '—')}
+          </div>
+          ${(e.tags || []).length ? `<div class="intel-tags">${e.tags.map(t => `<span class="intel-tag">${esc(t)}</span>`).join('')}</div>` : ''}
+        </div>`;
+      }).join('');
+    }
+
+    // Battlecard generation
+    async function generateBattlecard() {
+      if (intelData.length === 0) { alert('No intel to generate battlecard from'); return; }
+      const apiKey = document.getElementById('apiKey').value.trim();
+      if (!apiKey) { alert('Please enter your API key'); return; }
+
+      const pb = document.getElementById('progressBar'); pb.style.display = 'block';
+      const pf = document.getElementById('progressFill'); pf.style.width = '30%';
+      const st = document.getElementById('statusText'); st.style.display = 'block'; st.textContent = 'Generating battlecard...';
+
+      const showName = document.getElementById('showName').value || 'Trade Show';
+      const yourCtx = document.getElementById('yourContext').value;
+
+      const intelSummary = intelData.map(e =>
+        `[${e.company}] Message: ${e.marketing_message || 'N/A'} | Products: ${(e.products||[]).join(', ')} | Pricing: ${e.pricing_signals || 'N/A'} | Threat: ${e.threat_level} | Notes: ${e.threat_assessment || ''}`
+      ).join('\n');
+
+      const prompt = `You are a senior competitive intelligence analyst. Generate a comprehensive Competitive Battlecard Report based on field intelligence gathered at ${showName}.\n\n` +
+        (yourCtx ? `OUR COMPANY: ${yourCtx}\n\n` : '') +
+        `FIELD INTELLIGENCE (${intelData.length} entries):\n${intelSummary}\n\n` +
+        `Generate the battlecard with these sections:\n1. EXECUTIVE SUMMARY: 3-4 sentence overview of competitive landscape observed\n2. PER-COMPETITOR ANALYSIS: For each unique competitor, synthesize all intel into: positioning, products, pricing, threat level, recommended counter-strategy\n3. KEY TRENDS: 3-5 industry trends observed across competitors\n4. IMMEDIATE ACTION ITEMS: 5 specific actions our team should take based on this intel\n\n` +
+        `Respond with ONLY a JSON object:\n{\n  "executive_summary": "...",\n  "competitors": [{"name":"...", "positioning":"...", "products":"...", "pricing":"...", "threat":"high/medium/low", "counter_strategy":"..."}],\n  "trends": ["trend 1", "trend 2"],\n  "action_items": ["action 1", "action 2"]\n}\nJSON only.`;
+
+      try {
+        pf.style.width = '60%';
+        const resp = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+          body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 4096, messages: [{ role: 'user', content: prompt }] })
+        });
+        if (!resp.ok) { const err = await resp.json(); throw new Error(err.error?.message || 'API error'); }
+        const data = await resp.json();
+        const json = data.content[0].text.match(/\{[\s\S]*\}/);
+        if (!json) throw new Error('Could not parse');
+        const bc = JSON.parse(json[0]);
+        pf.style.width = '100%';
+        st.textContent = 'Battlecard ready!';
+
+        let html = `<div class="bc-section"><h3>Executive Summary</h3><p style="font-size:.85rem;color:var(--text-secondary);line-height:1.7">${esc(bc.executive_summary)}</p></div>`;
+
+        html += `<div class="bc-section"><h3>Competitor Analysis</h3>`;
+        (bc.competitors || []).forEach(c => {
+          const tc = c.threat === 'high' ? 'var(--red)' : c.threat === 'medium' ? 'var(--amber)' : 'var(--text-dim)';
+          html += `<div class="bc-competitor"><div class="comp-name">${esc(c.name)} <span style="font-size:.65rem;color:${tc};text-transform:uppercase"> ${c.threat}</span></div>`;
+          html += `<strong>Positioning:</strong> ${esc(c.positioning)}<br>`;
+          html += `<strong>Products:</strong> ${esc(c.products)}<br>`;
+          html += `<strong>Pricing:</strong> ${esc(c.pricing)}<br>`;
+          html += `<strong>Counter-strategy:</strong> ${esc(c.counter_strategy)}</div>`;
+        });
+        html += `</div>`;
+
+        html += `<div class="bc-section"><h3>Key Trends</h3><ul style="font-size:.8rem;color:var(--text-secondary);padding-left:1rem;line-height:1.8">`;
+        (bc.trends || []).forEach(t => { html += `<li>${esc(t)}</li>`; });
+        html += `</ul></div>`;
+
+        html += `<div class="bc-section"><h3>Action Items</h3><ol style="font-size:.8rem;color:var(--text-secondary);padding-left:1rem;line-height:1.8">`;
+        (bc.action_items || []).forEach(a => { html += `<li>${esc(a)}</li>`; });
+        html += `</ol></div>`;
+
+        document.getElementById('battlecardContent').innerHTML = html;
+        document.getElementById('battlecard').classList.add('visible');
+        document.getElementById('battlecard').scrollIntoView({ behavior: 'smooth' });
+      } catch (e) { st.textContent = 'Error: ' + e.message; }
+    }
+
+    function copyBattlecard() {
+      const el = document.getElementById('battlecardContent');
+      navigator.clipboard.writeText(el.innerText).then(() => {
+        const btns = document.querySelectorAll('.battlecard .btn-sm');
+        btns[0].textContent = 'Copied!';
+        setTimeout(() => { btns[0].textContent = 'Copy Report'; }, 1500);
+      });
+    }
+
+    function exportIntel() {
+      let csv = 'Company,Timestamp,Marketing Message,Products,Pricing,Booth Notes,Threat Level,Assessment,Tags\n';
+      intelData.forEach(e => {
+        csv += [e.company, e.timestamp, e.marketing_message||'', (e.products||[]).join('; '), e.pricing_signals||'', e.booth_notes||'', e.threat_level||'', e.threat_assessment||'', (e.tags||[]).join('; ')]
+          .map(v => '"'+String(v).replace(/"/g,'""')+'"').join(',') + '\n';
+      });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+      a.download = 'competitor-intel-' + new Date().toISOString().split('T')[0] + '.csv';
+      a.click();
+    }
+
+    renderWatchlist();
+    renderFeed();
+  </script>
+</body>
+</html>

@@ -27,6 +27,7 @@
 | [Badge Qualifier](https://lensmorofficial.github.io/trade-show-tools/badge-qualifier/) | Snap a badge photo, get instant AI lead qualification with CRM-ready data (BYOK) | Live |
 | [Outreach Generator](https://lensmorofficial.github.io/trade-show-tools/outreach-generator/) | Generate personalized post-show follow-up emails and LinkedIn messages (BYOK) | Live |
 | [Floor Plan Extractor](https://lensmorofficial.github.io/trade-show-tools/floorplan-extractor/) | Extract booth numbers and companies from floor plan images/PDFs into lead lists (BYOK) | Live |
+| [Competitor Radar](https://lensmorofficial.github.io/trade-show-tools/competitor-radar/) | Log competitor intel with photos/voice, auto-generate competitive battlecard (BYOK) | Live |
 
 ## ROI Calculator
 
