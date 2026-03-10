@@ -28,6 +28,7 @@
 | [Outreach Generator](https://lensmorofficial.github.io/trade-show-tools/outreach-generator/) | Generate personalized post-show follow-up emails and LinkedIn messages (BYOK) | Live |
 | [Floor Plan Extractor](https://lensmorofficial.github.io/trade-show-tools/floorplan-extractor/) | Extract booth numbers and companies from floor plan images/PDFs into lead lists (BYOK) | Live |
 | [Competitor Radar](https://lensmorofficial.github.io/trade-show-tools/competitor-radar/) | Log competitor intel with photos/voice, auto-generate competitive battlecard (BYOK) | Live |
+| [Booth Location Scorer](https://lensmorofficial.github.io/trade-show-tools/booth-scorer/) | Mark your booth on a floor plan, get AI position grading (A-F) with strategy (BYOK) | Live |
 
 ## ROI Calculator
 
