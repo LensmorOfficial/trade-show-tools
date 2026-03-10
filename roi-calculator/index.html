@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trade Show ROI Calculator — Free Online Tool</title>
+  <meta name="description" content="Calculate your trade show return on investment instantly. Enter your costs, leads, and conversion data to see ROI%, cost per lead, and break-even analysis.">
+  <meta name="keywords" content="trade show ROI calculator, exhibition ROI, trade show cost per lead, trade show budget, event ROI">
+  <link rel="canonical" href="https://lensmorofficial.github.io/trade-show-tools/roi-calculator/">
+  <meta property="og:title" content="Trade Show ROI Calculator — Free Online Tool">
+  <meta property="og:description" content="Calculate your trade show return on investment instantly. See ROI%, cost per lead, and break-even analysis.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://lensmorofficial.github.io/trade-show-tools/roi-calculator/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Trade Show ROI Calculator — Free Online Tool">
+  <meta name="twitter:description" content="Calculate your trade show ROI instantly. Free, no signup required.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Trade Show ROI Calculator",
+    "description": "Calculate your trade show return on investment. Enter costs, leads, and conversion data to see ROI percentage, cost per lead, and break-even analysis.",
+    "url": "https://lensmorofficial.github.io/trade-show-tools/roi-calculator/",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": {
+      "@type": "Organization",
+      "name": "Lensmor",
+      "url": "https://www.lensmor.com"
+    }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #6b75ff;
+      --primary-hover: #8189ff;
+      --green: #34d399;
+      --red: #f87171;
+      --amber: #fbbf24;
+      --bg: #0c0c12;
+      --bg-card: #1a1a24;
+      --bg-input: #0c0c12;
+      --stroke: #1f2033;
+      --stroke-hover: #2e2f4a;
+      --text: #ffffff;
+      --text-secondary: #a7a7a8;
+      --text-dim: #6b6b6c;
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
+
+    body {
+      font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      letter-spacing: -0.015em;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      line-height: 1.15;
+    }
+
+    header p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card h2 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--stroke);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.5rem; }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+
+    .form-group .hint {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 0.4rem;
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrap .prefix,
+    .input-wrap .suffix {
+      position: absolute;
+      color: var(--text-dim);
+      font-size: 0.875rem;
+      pointer-events: none;
+    }
+
+    .input-wrap .prefix { left: 0.75rem; }
+    .input-wrap .suffix { right: 0.75rem; }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.625rem 0.75rem;
+      background: var(--bg-input);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+      letter-spacing: -0.015em;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -moz-appearance: textfield;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(107, 117, 255, 0.15);
+    }
+
+    .has-prefix input { padding-left: 1.75rem; }
+    .has-suffix input { padding-right: 2rem; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 0.75rem 1.5rem;
+      background: var(--primary);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: -0.015em;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 0.5rem;
+    }
+
+    .btn:hover { background: var(--primary-hover); }
+    .btn:active { transform: scale(0.99); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      font-weight: 400;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .btn-secondary:hover { color: var(--text-secondary); background: rgba(255,255,255,0.03); }
+
+    /* Results */
+    #results { display: none; }
+    #results.visible { display: block; }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    @media (max-width: 600px) {
+      .results-grid { grid-template-columns: 1fr; }
+    }
+
+    .metric {
+      padding: 1rem;
+      background: var(--bg);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      text-align: center;
+    }
+
+    .metric .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .metric .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-dim);
+      margin-top: 0.3rem;
+    }
+
+    .metric.highlight {
+      grid-column: 1 / -1;
+      background: var(--bg);
+      border: 1px solid var(--primary);
+      padding: 1.25rem;
+    }
+
+    .metric.highlight .value { font-size: 2.25rem; }
+    .metric.highlight .label { color: var(--text-secondary); }
+
+    .roi-positive .value { color: var(--green); }
+    .roi-negative .value { color: var(--red); }
+    .roi-neutral .value { color: var(--amber); }
+    .metric.highlight.roi-positive { border-color: var(--green); }
+    .metric.highlight.roi-negative { border-color: var(--red); }
+    .metric.highlight.roi-neutral { border-color: var(--amber); }
+
+    .breakdown {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--stroke);
+    }
+
+    .breakdown h3 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .bar-label {
+      width: 130px;
+      flex-shrink: 0;
+      color: var(--text-secondary);
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 6px;
+      background: var(--stroke);
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 0 0.75rem;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .bar-value {
+      width: 70px;
+      text-align: right;
+      font-weight: 500;
+      flex-shrink: 0;
+      color: var(--text);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--stroke);
+    }
+
+    footer p {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-bottom: 0.5rem;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    footer a:hover { color: var(--primary-hover); }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1.25rem;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .back-link:hover { color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="../" class="back-link">&larr; All Tools</a>
+
+    <header>
+      <h1>Trade Show ROI Calculator</h1>
+      <p>Estimate your return on investment before committing to a trade show.</p>
+    </header>
+
+    <!-- Costs Section -->
+    <div class="card">
+      <h2>Exhibition Costs</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="boothCost">Booth Space & Setup</label>
+          <div class="hint">Rental, booth construction, signage</div>
+          <div class="input-wrap has-prefix">
+            <span class="prefix">$</span>
+            <input type="number" id="boothCost" value="15000" min="0" step="500">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="travelCost">Travel & Accommodation</label>
+          <div class="hint">Flights, hotels, meals, transport</div>
+          <div class="input-wrap has-prefix">
+            <span class="prefix">$</span>
+            <input type="number" id="travelCost" value="5000" min="0" step="500">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="marketingCost">Marketing & Collateral</label>
+          <div class="hint">Brochures, giveaways, demos, ads</div>
+          <div class="input-wrap has-prefix">
+            <span class="prefix">$</span>
+            <input type="number" id="marketingCost" value="3000" min="0" step="500">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="staffCost">Staff & Labor</label>
+          <div class="hint">Salaries, overtime, temporary staff</div>
+          <div class="input-wrap has-prefix">
+            <span class="prefix">$</span>
+            <input type="number" id="staffCost" value="7000" min="0" step="500">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="otherCost">Other Costs</label>
+          <div class="hint">Sponsorships, utilities, insurance</div>
+          <div class="input-wrap has-prefix">
+            <span class="prefix">$</span>
+            <input type="number" id="otherCost" value="0" min="0" step="500">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue Section -->
+    <div class="card">
+      <h2>Expected Returns</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="leadsCount">Leads Expected</label>
+          <div class="hint">Total qualified leads from the show</div>
+          <div class="input-wrap">
+            <input type="number" id="leadsCount" value="80" min="0" step="5">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="conversionRate">Conversion Rate</label>
+          <div class="hint">Leads that become paying customers</div>
+          <div class="input-wrap has-suffix">
+            <input type="number" id="conversionRate" value="10" min="0" max="100" step="1">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="dealSize">Average Deal Size</label>
+          <div class="hint">Revenue per converted customer</div>
+          <div class="input-wrap has-prefix">
+            <span class="prefix">$</span>
+            <input type="number" id="dealSize" value="12000" min="0" step="1000">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="salesCycle">Sales Cycle</label>
+          <div class="hint">Months from lead to close (for context)</div>
+          <div class="input-wrap has-suffix">
+            <input type="number" id="salesCycle" value="3" min="1" max="36" step="1">
+            <span class="suffix">mo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" onclick="calculate()">Calculate ROI</button>
+    <button class="btn btn-secondary" onclick="resetForm()">Reset</button>
+
+    <!-- Results -->
+    <div id="results" class="card">
+      <h2>Your Trade Show ROI</h2>
+      <div class="results-grid">
+        <div class="metric highlight" id="roiMetric">
+          <div class="value" id="roiValue">—</div>
+          <div class="label">Return on Investment</div>
+        </div>
+        <div class="metric">
+          <div class="value" id="totalCostValue">—</div>
+          <div class="label">Total Investment</div>
+        </div>
+        <div class="metric">
+          <div class="value" id="revenueValue">—</div>
+          <div class="label">Expected Revenue</div>
+        </div>
+        <div class="metric">
+          <div class="value" id="profitValue">—</div>
+          <div class="label">Net Profit / Loss</div>
+        </div>
+        <div class="metric">
+          <div class="value" id="cplValue">—</div>
+          <div class="label">Cost per Lead</div>
+        </div>
+        <div class="metric">
+          <div class="value" id="cacValue">—</div>
+          <div class="label">Cost per Acquisition</div>
+        </div>
+        <div class="metric">
+          <div class="value" id="breakEvenValue">—</div>
+          <div class="label">Break-even Leads Needed</div>
+        </div>
+      </div>
+
+      <div class="breakdown">
+        <h3>Cost Breakdown</h3>
+        <div id="costBars"></div>
+      </div>
+    </div>
+
+    <footer>
+      <p>
+        Built by <a href="https://www.lensmor.com/?utm_source=github&utm_medium=tool&utm_campaign=roi-calculator" target="_blank" rel="noopener">Lensmor</a> &mdash; AI-powered trade show intelligence for B2B teams.
+      </p>
+      <p>
+        <a href="https://github.com/LensmorOfficial/trade-show-tools" target="_blank" rel="noopener">View on GitHub</a>
+        &middot;
+        <a href="https://github.com/LensmorOfficial/awesome-trade-shows" target="_blank" rel="noopener">Browse 100+ Trade Shows</a>
+        &middot;
+        <a href="https://github.com/LensmorOfficial/trade-show-calendar" target="_blank" rel="noopener">Open Trade Show Data</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    function getVal(id) {
+      return parseFloat(document.getElementById(id).value) || 0;
+    }
+
+    function fmt(n) {
+      if (Math.abs(n) >= 1000) {
+        return '$' + n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+      }
+      return '$' + n.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    }
+
+    function calculate() {
+      var booth = getVal('boothCost');
+      var travel = getVal('travelCost');
+      var marketing = getVal('marketingCost');
+      var staff = getVal('staffCost');
+      var other = getVal('otherCost');
+      var leads = getVal('leadsCount');
+      var convRate = getVal('conversionRate') / 100;
+      var dealSize = getVal('dealSize');
+
+      var totalCost = booth + travel + marketing + staff + other;
+      var customers = leads * convRate;
+      var revenue = customers * dealSize;
+      var profit = revenue - totalCost;
+      var roi = totalCost > 0 ? (profit / totalCost) * 100 : 0;
+      var cpl = leads > 0 ? totalCost / leads : 0;
+      var cac = customers > 0 ? totalCost / customers : 0;
+      var breakEven = (convRate > 0 && dealSize > 0) ? Math.ceil(totalCost / (convRate * dealSize)) : 0;
+
+      document.getElementById('roiValue').textContent = roi.toFixed(1) + '%';
+      document.getElementById('totalCostValue').textContent = fmt(totalCost);
+      document.getElementById('revenueValue').textContent = fmt(revenue);
+      document.getElementById('profitValue').textContent = fmt(profit);
+      document.getElementById('cplValue').textContent = fmt(cpl);
+      document.getElementById('cacValue').textContent = customers > 0 ? fmt(cac) : 'N/A';
+      document.getElementById('breakEvenValue').textContent = breakEven > 0 ? breakEven + ' leads' : 'N/A';
+
+      var roiMetric = document.getElementById('roiMetric');
+      roiMetric.className = 'metric highlight';
+      if (roi > 0) roiMetric.classList.add('roi-positive');
+      else if (roi < 0) roiMetric.classList.add('roi-negative');
+      else roiMetric.classList.add('roi-neutral');
+
+      var profitEl = document.getElementById('profitValue');
+      profitEl.style.color = profit >= 0 ? 'var(--green)' : 'var(--red)';
+
+      // Cost breakdown bars
+      var costs = [
+        { label: 'Booth & Setup', value: booth },
+        { label: 'Travel', value: travel },
+        { label: 'Marketing', value: marketing },
+        { label: 'Staff & Labor', value: staff },
+        { label: 'Other', value: other }
+      ].filter(function(c) { return c.value > 0; });
+
+      var maxCost = Math.max.apply(null, costs.map(function(c) { return c.value; }));
+      var barsHtml = '';
+      for (var i = 0; i < costs.length; i++) {
+        var pct = maxCost > 0 ? (costs[i].value / maxCost) * 100 : 0;
+        barsHtml += '<div class="bar-row">' +
+          '<span class="bar-label">' + costs[i].label + '</span>' +
+          '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"></div></div>' +
+          '<span class="bar-value">' + fmt(costs[i].value) + '</span>' +
+          '</div>';
+      }
+      document.getElementById('costBars').innerHTML = barsHtml;
+
+      var results = document.getElementById('results');
+      results.classList.add('visible');
+      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function resetForm() {
+      document.getElementById('boothCost').value = 15000;
+      document.getElementById('travelCost').value = 5000;
+      document.getElementById('marketingCost').value = 3000;
+      document.getElementById('staffCost').value = 7000;
+      document.getElementById('otherCost').value = 0;
+      document.getElementById('leadsCount').value = 80;
+      document.getElementById('conversionRate').value = 10;
+      document.getElementById('dealSize').value = 12000;
+      document.getElementById('salesCycle').value = 3;
+      document.getElementById('results').classList.remove('visible');
+    }
+
+    // Allow Enter key to trigger calculation
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') calculate();
+    });
+  </script>
+</body>
+</html>
