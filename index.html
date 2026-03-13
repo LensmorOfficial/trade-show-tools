@@ -23,6 +23,20 @@
     header { text-align: center; margin-bottom: 2.5rem; }
     header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.15; }
     header p { color: #a7a7a8; font-size: 1rem; max-width: 480px; margin: 0 auto; }
+    .star-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      background: rgba(107, 117, 255, 0.08);
+      border: 1px solid rgba(107, 117, 255, 0.2);
+      border-radius: 10px;
+      padding: 0.75rem 1.25rem;
+      margin-bottom: 2rem;
+      font-size: 0.875rem;
+      color: #a7a7a8;
+    }
+    .star-banner strong { color: #fff; }
     .tools-grid { display: grid; gap: 1rem; }
     .tool-card {
       display: block;
@@ -69,6 +83,11 @@
       <h1>Trade Show Tools</h1>
       <p>Free online tools to help B2B teams plan, budget, and measure trade show performance.</p>
     </header>
+
+    <div class="star-banner">
+      <strong>Find this useful?</strong> Give it a star on GitHub — it helps others discover these tools.
+      <a class="github-button" href="https://github.com/LensmorOfficial/trade-show-tools" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star LensmorOfficial/trade-show-tools on GitHub">Star</a>
+    </div>
 
     <div class="tools-grid">
       <a href="roi-calculator/" class="tool-card">
@@ -137,5 +156,6 @@
       </p>
     </footer>
   </div>
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
 </html>
