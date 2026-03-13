@@ -179,6 +179,7 @@
     }
 
     .btn-outline:hover { border-color: var(--primary); color: var(--text); background: transparent; }
+    .btn-sm { padding: 0.35rem 0.6rem; font-size: 0.7rem; width: auto; }
 
     /* Progress */
     .progress-bar {
@@ -210,6 +211,7 @@
     }
 
     .status-text.visible { display: block; }
+    :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
     /* Results table */
     #results { display: none; }
@@ -335,8 +337,12 @@
       <h2>1. Connect AI</h2>
       <div class="form-row">
         <label for="apiKey">Anthropic API Key</label>
-        <div class="hint">Your key stays in your browser. Never sent to any server except Anthropic.</div>
+        <div class="hint">Your key is used only for AI calls. You can choose to store it locally.</div>
         <input type="password" id="apiKey" placeholder="sk-ant-...">
+        <div style="display:flex;align-items:center;gap:0.4rem;margin-top:0.5rem;">
+          <input type="checkbox" id="rememberKey">
+          <label for="rememberKey" style="font-size:0.75rem;color:var(--text-dim);margin:0;">Remember API key on this device</label>
+        </div>
         <div class="key-note">Get a key at <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener" style="color:var(--primary)">console.anthropic.com</a>. Typical cost: ~$0.02 per 100 companies analyzed.</div>
       </div>
     </div>
@@ -351,6 +357,19 @@
       </div>
       <input type="file" id="fileInput" accept=".csv">
       <div class="preview-info" id="previewInfo"></div>
+      <div class="preview-info" id="previewTableWrap" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <span style="font-size:0.75rem;color:var(--text-dim)">Preview (first 50 rows)</span>
+          <div style="display:flex;gap:0.4rem;">
+            <button class="btn btn-outline btn-sm" id="prevPageBtn" onclick="changePage(-1)">Prev</button>
+            <button class="btn btn-outline btn-sm" id="nextPageBtn" onclick="changePage(1)">Next</button>
+          </div>
+        </div>
+        <div style="overflow:auto;max-height:240px;border:1px solid var(--stroke);border-radius:var(--radius);">
+          <table style="width:100%;border-collapse:collapse;font-size:0.75rem;" id="previewTable"></table>
+        </div>
+      </div>
+      <button class="btn btn-outline" onclick="downloadSampleCSV()" style="margin-top:0.75rem;">Download Sample CSV</button>
 
       <div class="form-row" id="columnMapRow" style="display:none;">
         <label>Column Mapping</label>
@@ -389,6 +408,7 @@
     </div>
 
     <button class="btn" id="runBtn" onclick="runMatcher()">Analyze Exhibitor List</button>
+    <button class="btn btn-outline" onclick="clearLocalData()">Clear Local Data</button>
 
     <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
     <div class="status-text" id="statusText"></div>
@@ -418,25 +438,44 @@
     </footer>
   </div>
 
+  <script src="../shared/storage.js"></script>
+  <script src="../shared/csv.js"></script>
+  <script src="../shared/json.js"></script>
+  <script src="../shared/ai.js"></script>
   <script>
     var csvData = [];
     var csvHeaders = [];
     var results = [];
+    var previewPage = 0;
+    var PREVIEW_PAGE_SIZE = 10;
+    var store = window.LensmorStore ? window.LensmorStore.createStore('icp') : null;
+    window.LENSMOR_API_BASE = window.LENSMOR_API_BASE || '';
+    window.LENSMOR_MODEL_PRICING = window.LENSMOR_MODEL_PRICING || { 'claude-sonnet-4-20250514': { in: 3, out: 15 } };
 
     // Load saved API key
     try {
-      var savedKey = localStorage.getItem('icp-api-key');
-      if (savedKey) document.getElementById('apiKey').value = savedKey;
-      var savedICP = localStorage.getItem('icp-text');
+      var savedKey = store ? store.get('apiKey', '') : localStorage.getItem('icp-api-key');
+      if (savedKey) { document.getElementById('apiKey').value = savedKey; document.getElementById('rememberKey').checked = true; }
+      var savedICP = store ? store.get('icp-text', '') : localStorage.getItem('icp-text');
       if (savedICP) document.getElementById('icpText').value = savedICP;
     } catch(e) {}
 
     // Save on change
     document.getElementById('apiKey').addEventListener('change', function() {
-      try { localStorage.setItem('icp-api-key', this.value); } catch(e) {}
+      if (document.getElementById('rememberKey').checked) {
+        if (store) store.set('apiKey', this.value);
+        else { try { localStorage.setItem('icp-api-key', this.value); } catch(e) {} }
+      }
     });
     document.getElementById('icpText').addEventListener('change', function() {
-      try { localStorage.setItem('icp-text', this.value); } catch(e) {}
+      if (store) store.set('icp-text', this.value);
+      else { try { localStorage.setItem('icp-text', this.value); } catch(e) {} }
+    });
+    document.getElementById('rememberKey').addEventListener('change', function() {
+      if (!this.checked) {
+        if (store) store.remove('apiKey');
+        else { try { localStorage.removeItem('icp-api-key'); } catch(e) {} }
+      }
     });
 
     // File handling
@@ -449,29 +488,8 @@
     fi.addEventListener('change', function() { if (fi.files[0]) handleFile(fi.files[0]); });
 
     function parseCSV(text) {
-      var lines = text.split(/\r?\n/).filter(function(l) { return l.trim(); });
-      if (lines.length < 2) return { headers: [], rows: [] };
-      var headers = parseCSVLine(lines[0]);
-      var rows = [];
-      for (var i = 1; i < lines.length; i++) {
-        var vals = parseCSVLine(lines[i]);
-        if (vals.length >= headers.length * 0.5) rows.push(vals);
-      }
-      return { headers: headers, rows: rows };
-    }
-
-    function parseCSVLine(line) {
-      var result = [];
-      var current = '';
-      var inQuotes = false;
-      for (var i = 0; i < line.length; i++) {
-        var c = line[i];
-        if (c === '"') { inQuotes = !inQuotes; }
-        else if (c === ',' && !inQuotes) { result.push(current.trim()); current = ''; }
-        else { current += c; }
-      }
-      result.push(current.trim());
-      return result;
+      if (window.LensmorCSV) return window.LensmorCSV.parse(text);
+      return { headers: [], rows: [] };
     }
 
     function handleFile(file) {
@@ -516,8 +534,49 @@
         if (descGuess >= 0) colDesc.value = descGuess;
 
         document.getElementById('columnMapRow').style.display = 'block';
+        renderPreviewTable();
       };
       reader.readAsText(file);
+    }
+
+    function renderPreviewTable() {
+      var wrap = document.getElementById('previewTableWrap');
+      var table = document.getElementById('previewTable');
+      if (!csvData.length) { wrap.style.display = 'none'; return; }
+      wrap.style.display = 'block';
+      var start = previewPage * PREVIEW_PAGE_SIZE;
+      var end = Math.min(start + PREVIEW_PAGE_SIZE, Math.min(csvData.length, 50));
+      var html = '<thead><tr>' + csvHeaders.map(function(h) { return '<th style="text-align:left;padding:0.4rem;border-bottom:1px solid var(--stroke);color:var(--text-dim);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.04em;">' + h + '</th>'; }).join('') + '</tr></thead>';
+      html += '<tbody>';
+      for (var i = start; i < end; i++) {
+        html += '<tr>' + csvData[i].map(function(c) { return '<td style="padding:0.35rem;border-bottom:1px solid var(--stroke);color:var(--text-secondary);">' + (c || '') + '</td>'; }).join('') + '</tr>';
+      }
+      html += '</tbody>';
+      table.innerHTML = html;
+      document.getElementById('prevPageBtn').disabled = previewPage === 0;
+      document.getElementById('nextPageBtn').disabled = end >= Math.min(csvData.length, 50);
+    }
+
+    function changePage(delta) {
+      var maxPage = Math.floor(Math.max(0, Math.min(csvData.length, 50) - 1) / PREVIEW_PAGE_SIZE);
+      previewPage = Math.max(0, Math.min(previewPage + delta, maxPage));
+      renderPreviewTable();
+    }
+
+    function downloadSampleCSV() {
+      var headers = ['Company','Industry','Description','Booth'];
+      var rows = [
+        ['Acme Robotics','Logistics Automation','Warehouse picking robots for enterprise distribution centers','H3-411'],
+        ['Nimbus ERP','SaaS','Cloud ERP for manufacturing and supply chain','B2-210'],
+        ['Helio Energy','Energy','Battery storage systems for commercial buildings','A1-118']
+      ];
+      var csv = window.LensmorCSV ? window.LensmorCSV.stringify(headers, rows) : '';
+      var blob = new Blob([csv], { type: 'text/csv' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'icp-matcher-sample.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
     }
 
     async function runMatcher() {
@@ -546,6 +605,15 @@
         return entry;
       }).filter(function(c) { return c.name; });
 
+      // Deduplicate by company name
+      var seen = {};
+      companies = companies.filter(function(c) {
+        var key = c.name.toLowerCase().trim();
+        if (seen[key]) return false;
+        seen[key] = true;
+        return true;
+      });
+
       if (companies.length === 0) { alert('No company names found in the selected column'); return; }
 
       var btn = document.getElementById('runBtn');
@@ -565,8 +633,25 @@
         batches.push(companies.slice(i, i + BATCH));
       }
 
+      // Rough cost estimate
+      var estimatedTokens = 0;
+      batches.forEach(function(batch) {
+        var companyList = batch.map(function(c, i) {
+          var line = (i + 1) + '. ' + c.name;
+          if (c.desc) line += ' | ' + c.desc;
+          if (c.extra) line += ' | ' + c.extra;
+          return line;
+        }).join('\n');
+        var promptPreview = 'You are an expert B2B sales analyst. Score each company below for ICP (Ideal Customer Profile) match.\n\n' +
+          'ICP DESCRIPTION:\n' + icpText + '\n\n' +
+          'COMPANIES TO SCORE:\n' + companyList + '\n\n';
+        estimatedTokens += window.LensmorAI ? window.LensmorAI.estimateTokens([{ role: 'user', content: promptPreview }]) : 0;
+      });
+      var estCost = window.LensmorAI ? window.LensmorAI.estimateCost('claude-sonnet-4-20250514', estimatedTokens, companies.length * 60) : null;
+
       for (var b = 0; b < batches.length; b++) {
-        st.textContent = 'Analyzing batch ' + (b + 1) + ' of ' + batches.length + ' (' + ((b / batches.length) * 100).toFixed(0) + '%)...';
+        var costText = estCost ? (' Est. cost ~$' + estCost) : '';
+        st.textContent = 'Analyzing batch ' + (b + 1) + ' of ' + batches.length + ' (' + ((b / batches.length) * 100).toFixed(0) + '%)...' + costText;
         pf.style.width = ((b / batches.length) * 100) + '%';
 
         var batch = batches[b];
@@ -584,47 +669,31 @@
           '- "name": company name exactly as given\n' +
           '- "score": integer 0-100 (100 = perfect ICP match)\n' +
           '- "reason": 1 sentence explaining the score\n' +
-          '- "pitch": For companies scoring 60+, a 2-sentence LinkedIn ice-breaker message. For others, empty string.\n\n' +
+          '- "pitch": For companies scoring 60+, a 2-sentence LinkedIn ice-breaker message. For others, empty string.\n' +
+          '- "confidence": low/medium/high\n\n' +
           'Respond with ONLY valid JSON array, no markdown, no explanation.';
 
         try {
-          var resp = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-api-key': apiKey,
-              'anthropic-version': '2023-06-01',
-              'anthropic-dangerous-direct-browser-access': 'true'
-            },
-            body: JSON.stringify({
-              model: 'claude-sonnet-4-20250514',
-              max_tokens: 4096,
-              messages: [{ role: 'user', content: prompt }]
-            })
+          var data = await window.LensmorAI.callAnthropic({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 4096,
+            messages: [{ role: 'user', content: prompt }],
+            apiKey: apiKey
           });
-
-          if (!resp.ok) {
-            var err = await resp.json();
-            throw new Error(err.error?.message || 'API error ' + resp.status);
-          }
-
-          var data = await resp.json();
-          var text = data.content[0].text;
-          // Extract JSON from response
-          var jsonMatch = text.match(/\[[\s\S]*\]/);
-          if (jsonMatch) {
-            var scored = JSON.parse(jsonMatch[0]);
-            scored.forEach(function(s) {
-              var orig = batch.find(function(c) { return c.name === s.name; });
-              results.push({
-                name: s.name,
-                score: s.score || 0,
-                reason: s.reason || '',
-                pitch: s.pitch || '',
-                index: orig ? orig.index : -1
-              });
+          var text = window.LensmorAI.extractText(data);
+          var parsed = window.LensmorJSON ? window.LensmorJSON.safeParse(text) : { ok: false };
+          if (!parsed.ok || !Array.isArray(parsed.value)) throw new Error(parsed.error || 'Invalid JSON response');
+          parsed.value.forEach(function(s) {
+            var orig = batch.find(function(c) { return c.name === s.name; });
+            results.push({
+              name: s.name,
+              score: s.score || 0,
+              reason: s.reason || '',
+              pitch: s.pitch || '',
+              confidence: s.confidence || '',
+              index: orig ? orig.index : -1
             });
-          }
+          });
         } catch (e) {
           st.textContent = 'Error: ' + e.message;
           btn.disabled = false;
@@ -682,9 +751,18 @@
     }
 
     function exportCSV() {
-      var csv = 'Company,Score,Reason,Ice-Breaker Pitch\n';
+      var csv = 'Company,Score,Reason,Ice-Breaker Pitch,Confidence,Source Tool,Timestamp\n';
       results.forEach(function(r) {
-        csv += '"' + r.name.replace(/"/g, '""') + '",' + r.score + ',"' + r.reason.replace(/"/g, '""') + '","' + r.pitch.replace(/"/g, '""') + '"\n';
+        var row = [
+          r.name,
+          r.score,
+          r.reason,
+          r.pitch,
+          r.confidence || '',
+          'icp-matcher',
+          new Date().toISOString()
+        ];
+        csv += row.map(function(v) { return '"' + String(v).replace(/"/g, '""') + '"'; }).join(',') + '\n';
       });
       var blob = new Blob([csv], { type: 'text/csv' });
       var url = URL.createObjectURL(blob);
@@ -710,6 +788,22 @@
         btn.textContent = 'Copied!';
         setTimeout(function() { btn.textContent = 'Copy Top Targets'; }, 2000);
       });
+    }
+
+    function clearLocalData() {
+      if (store) store.clear();
+      document.getElementById('apiKey').value = '';
+      document.getElementById('rememberKey').checked = false;
+      document.getElementById('icpText').value = '';
+      csvData = [];
+      csvHeaders = [];
+      document.getElementById('previewInfo').classList.remove('visible');
+      document.getElementById('previewTableWrap').style.display = 'none';
+      document.getElementById('columnMapRow').style.display = 'none';
+      document.getElementById('results').classList.remove('visible');
+      document.getElementById('dropZone').classList.remove('has-file');
+      document.getElementById('dropZone').querySelector('.dz-text').textContent = 'Drop a CSV file here or click to browse';
+      document.getElementById('dropZone').querySelector('.dz-hint').textContent = 'Supports: .csv files with company names. Other columns (industry, description, booth#) improve accuracy.';
     }
   </script>
 </body>

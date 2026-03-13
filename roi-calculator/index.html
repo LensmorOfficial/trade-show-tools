@@ -352,6 +352,7 @@
     }
 
     .back-link:hover { color: var(--primary); }
+    :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
   </style>
 </head>
 <body>
@@ -450,8 +451,16 @@
           </div>
         </div>
         <div class="form-group">
+          <label for="grossMargin">Gross Margin</label>
+          <div class="hint">Used to estimate gross profit vs. revenue</div>
+          <div class="input-wrap has-suffix">
+            <input type="number" id="grossMargin" value="100" min="0" max="100" step="1">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <div class="form-group">
           <label for="salesCycle">Sales Cycle</label>
-          <div class="hint">Months from lead to close (for context)</div>
+          <div class="hint">Months from lead to close (used for payback estimate)</div>
           <div class="input-wrap has-suffix">
             <input type="number" id="salesCycle" value="3" min="1" max="36" step="1">
             <span class="suffix">mo</span>
@@ -462,6 +471,7 @@
 
     <button class="btn" onclick="calculate()">Calculate ROI</button>
     <button class="btn btn-secondary" onclick="resetForm()">Reset</button>
+    <button class="btn btn-secondary" onclick="clearSaved()">Clear Saved Data</button>
 
     <!-- Results -->
     <div id="results" class="card">
@@ -480,6 +490,10 @@
           <div class="label">Expected Revenue</div>
         </div>
         <div class="metric">
+          <div class="value" id="grossProfitValue">—</div>
+          <div class="label">Expected Gross Profit</div>
+        </div>
+        <div class="metric">
           <div class="value" id="profitValue">—</div>
           <div class="label">Net Profit / Loss</div>
         </div>
@@ -494,6 +508,14 @@
         <div class="metric">
           <div class="value" id="breakEvenValue">—</div>
           <div class="label">Break-even Leads Needed</div>
+        </div>
+        <div class="metric">
+          <div class="value" id="paybackValue">—</div>
+          <div class="label">Payback Period (Months)</div>
+        </div>
+        <div class="metric">
+          <div class="value" id="annualizedValue">—</div>
+          <div class="label">Annualized ROI</div>
         </div>
       </div>
 
@@ -510,8 +532,10 @@
       <div style="font-size:0.8rem;color:var(--text-secondary);line-height:1.7;">
         <p style="margin-bottom:0.75rem;"><strong style="color:var(--text);">ROI</strong> = (Revenue - Total Cost) / Total Cost x 100</p>
         <p style="margin-bottom:0.75rem;"><strong style="color:var(--text);">Revenue</strong> = Leads x Conversion Rate x Avg Deal Size</p>
+        <p style="margin-bottom:0.75rem;"><strong style="color:var(--text);">Gross Profit</strong> = Revenue x Gross Margin</p>
         <p style="margin-bottom:0.75rem;"><strong style="color:var(--text);">Cost per Lead</strong> = Total Cost / Number of Leads</p>
         <p style="margin-bottom:0.75rem;"><strong style="color:var(--text);">Break-even Leads</strong> = Total Cost / (Conversion Rate x Deal Size)</p>
+        <p style="margin-bottom:0.75rem;"><strong style="color:var(--text);">Payback Period</strong> assumes revenue realized evenly across the sales cycle</p>
         <p style="color:var(--text-dim);font-size:0.75rem;margin-top:1rem;">Industry benchmarks: B2B trade show conversion rates typically range 5-15%. Average cost per lead at trade shows is $100-$500, compared to $300-$1,000 for digital channels (CEIR Index Report).</p>
       </div>
     </div>
@@ -530,9 +554,11 @@
     </footer>
   </div>
 
+  <script src="../shared/storage.js"></script>
   <script>
     var SYM = '$';
-    var FIELDS = ['boothCost','travelCost','marketingCost','staffCost','otherCost','leadsCount','conversionRate','dealSize','salesCycle'];
+    var FIELDS = ['boothCost','travelCost','marketingCost','staffCost','otherCost','leadsCount','conversionRate','dealSize','grossMargin','salesCycle'];
+    var store = window.LensmorStore ? window.LensmorStore.createStore('roi') : null;
 
     function getVal(id) { return parseFloat(document.getElementById(id).value) || 0; }
 
@@ -551,12 +577,13 @@
     function saveState() {
       var state = { currency: SYM };
       FIELDS.forEach(function(id) { state[id] = document.getElementById(id).value; });
-      try { localStorage.setItem('roi-calc', JSON.stringify(state)); } catch(e) {}
+      if (store) store.set('state', state);
+      else { try { localStorage.setItem('roi-calc', JSON.stringify(state)); } catch(e) {} }
     }
 
     function loadState() {
       try {
-        var s = JSON.parse(localStorage.getItem('roi-calc'));
+        var s = store ? store.get('state', null) : JSON.parse(localStorage.getItem('roi-calc'));
         if (!s) return;
         if (s.currency) {
           SYM = s.currency;
@@ -571,23 +598,31 @@
       var booth = getVal('boothCost'), travel = getVal('travelCost'), marketing = getVal('marketingCost');
       var staff = getVal('staffCost'), other = getVal('otherCost');
       var leads = getVal('leadsCount'), convRate = getVal('conversionRate') / 100, dealSize = getVal('dealSize');
+      var grossMargin = getVal('grossMargin') / 100;
+      var salesCycle = getVal('salesCycle');
 
       var totalCost = booth + travel + marketing + staff + other;
       var customers = leads * convRate;
       var revenue = customers * dealSize;
+      var grossProfit = revenue * (grossMargin || 0);
       var profit = revenue - totalCost;
       var roi = totalCost > 0 ? (profit / totalCost) * 100 : 0;
       var cpl = leads > 0 ? totalCost / leads : 0;
       var cac = customers > 0 ? totalCost / customers : 0;
       var breakEven = (convRate > 0 && dealSize > 0) ? Math.ceil(totalCost / (convRate * dealSize)) : 0;
+      var payback = (salesCycle > 0 && revenue > 0) ? (totalCost / (revenue / salesCycle)) : 0;
+      var annualized = (salesCycle > 0 && totalCost > 0) ? ((profit / totalCost) * (12 / salesCycle) * 100) : 0;
 
       document.getElementById('roiValue').textContent = roi.toFixed(1) + '%';
       document.getElementById('totalCostValue').textContent = fmt(totalCost);
       document.getElementById('revenueValue').textContent = fmt(revenue);
+      document.getElementById('grossProfitValue').textContent = fmt(grossProfit);
       document.getElementById('profitValue').textContent = fmt(profit);
       document.getElementById('cplValue').textContent = fmt(cpl);
       document.getElementById('cacValue').textContent = customers > 0 ? fmt(cac) : 'N/A';
       document.getElementById('breakEvenValue').textContent = breakEven > 0 ? breakEven + ' leads' : 'N/A';
+      document.getElementById('paybackValue').textContent = payback > 0 ? payback.toFixed(1) + ' mo' : 'N/A';
+      document.getElementById('annualizedValue').textContent = totalCost > 0 ? annualized.toFixed(1) + '%' : 'N/A';
 
       var roiMetric = document.getElementById('roiMetric');
       roiMetric.className = 'metric highlight';
@@ -627,10 +662,13 @@
         'ROI: ' + r + '\n' +
         'Total Investment: ' + document.getElementById('totalCostValue').textContent + '\n' +
         'Expected Revenue: ' + document.getElementById('revenueValue').textContent + '\n' +
+        'Expected Gross Profit: ' + document.getElementById('grossProfitValue').textContent + '\n' +
         'Net Profit/Loss: ' + document.getElementById('profitValue').textContent + '\n' +
         'Cost per Lead: ' + document.getElementById('cplValue').textContent + '\n' +
         'Cost per Acquisition: ' + document.getElementById('cacValue').textContent + '\n' +
-        'Break-even: ' + document.getElementById('breakEvenValue').textContent + '\n\n' +
+        'Break-even: ' + document.getElementById('breakEvenValue').textContent + '\n' +
+        'Payback Period: ' + document.getElementById('paybackValue').textContent + '\n' +
+        'Annualized ROI: ' + document.getElementById('annualizedValue').textContent + '\n\n' +
         '---\nCalculated with Lensmor Trade Show Tools\nhttps://lensmorofficial.github.io/trade-show-tools/roi-calculator/\n';
       navigator.clipboard.writeText(text).then(function() {
         var btn = document.querySelector('[onclick="copyResults()"]');
@@ -648,9 +686,15 @@
       document.getElementById('leadsCount').value = 80;
       document.getElementById('conversionRate').value = 10;
       document.getElementById('dealSize').value = 12000;
+      document.getElementById('grossMargin').value = 100;
       document.getElementById('salesCycle').value = 3;
       document.getElementById('results').classList.remove('visible');
       saveState();
+    }
+
+    function clearSaved() {
+      if (store) store.clear();
+      document.getElementById('results').classList.remove('visible');
     }
 
     // Auto-save on input change

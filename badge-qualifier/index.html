@@ -119,6 +119,7 @@
       .info-grid { grid-template-columns: 1fr; }
       header h1 { font-size: 1.5rem; }
     }
+    :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
   </style>
 </head>
 <body>
@@ -135,7 +136,11 @@
       <div class="form-row">
         <label>API Key</label>
         <input type="password" id="apiKey" placeholder="sk-ant-...">
-        <div class="key-note">Your Anthropic API key. Stored locally only. <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--primary)">Get one</a></div>
+        <div style="display:flex;align-items:center;gap:0.4rem;margin-top:0.5rem;">
+          <input type="checkbox" id="rememberKey">
+          <label for="rememberKey" style="font-size:0.75rem;color:var(--text-dim);margin:0;">Remember API key on this device</label>
+        </div>
+        <div class="key-note">Your Anthropic API key. Used only for AI calls. <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--primary)">Get one</a></div>
       </div>
       <div class="form-row">
         <label>Your ICP (optional)</label>
@@ -173,6 +178,7 @@
       </div>
 
       <button class="btn" id="qualifyBtn" onclick="qualify()">Qualify This Lead</button>
+      <button class="btn btn-outline" onclick="clearLocalData()">Clear Local Data</button>
     </div>
 
     <div id="result">
@@ -210,28 +216,44 @@
     </footer>
   </div>
 
+  <script src="../shared/storage.js"></script>
+  <script src="../shared/json.js"></script>
+  <script src="../shared/ai.js"></script>
   <script>
     var imageBase64 = null;
     var isRecording = false;
     var recognition = null;
     var sessionLeads = [];
     var currentLead = null;
+    var store = window.LensmorStore ? window.LensmorStore.createStore('badge') : null;
+    window.LENSMOR_API_BASE = window.LENSMOR_API_BASE || '';
+    window.LENSMOR_MODEL_PRICING = window.LENSMOR_MODEL_PRICING || { 'claude-sonnet-4-20250514': { in: 3, out: 15 } };
 
     // Load saved state
     try {
-      var k = localStorage.getItem('badge-api-key');
-      if (k) document.getElementById('apiKey').value = k;
-      var icp = localStorage.getItem('badge-icp');
+      var k = store ? store.get('apiKey', '') : localStorage.getItem('badge-api-key');
+      if (k) { document.getElementById('apiKey').value = k; document.getElementById('rememberKey').checked = true; }
+      var icp = store ? store.get('badge-icp', '') : localStorage.getItem('badge-icp');
       if (icp) document.getElementById('icpContext').value = icp;
-      var saved = localStorage.getItem('badge-session');
+      var saved = store ? store.get('session', null) : localStorage.getItem('badge-session');
       if (saved) sessionLeads = JSON.parse(saved);
     } catch(e) {}
 
     document.getElementById('apiKey').addEventListener('change', function() {
-      try { localStorage.setItem('badge-api-key', this.value); } catch(e) {}
+      if (document.getElementById('rememberKey').checked) {
+        if (store) store.set('apiKey', this.value);
+        else { try { localStorage.setItem('badge-api-key', this.value); } catch(e) {} }
+      }
     });
     document.getElementById('icpContext').addEventListener('change', function() {
-      try { localStorage.setItem('badge-icp', this.value); } catch(e) {}
+      if (store) store.set('badge-icp', this.value);
+      else { try { localStorage.setItem('badge-icp', this.value); } catch(e) {} }
+    });
+    document.getElementById('rememberKey').addEventListener('change', function() {
+      if (!this.checked) {
+        if (store) store.remove('apiKey');
+        else { try { localStorage.removeItem('badge-api-key'); } catch(e) {} }
+      }
     });
 
     // Photo handling
@@ -354,39 +376,26 @@
       prompt += '}';
 
       try {
-        var resp = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey,
-            'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-direct-browser-access': 'true'
-          },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 1024,
-            messages: [{
-              role: 'user',
-              content: [
-                { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageBase64 } },
-                { type: 'text', text: prompt }
-              ]
-            }]
-          })
+        var data = await window.LensmorAI.callAnthropic({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1024,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageBase64 } },
+              { type: 'text', text: prompt }
+            ]
+          }],
+          apiKey: apiKey
         });
 
-        if (!resp.ok) {
-          var err = await resp.json();
-          throw new Error(err.error?.message || 'API error');
-        }
+        var text = window.LensmorAI.extractText(data);
+        var parsed = window.LensmorJSON ? window.LensmorJSON.safeParse(text) : { ok: false };
+        if (!parsed.ok || !parsed.value) throw new Error(parsed.error || 'Could not parse response');
 
-        var data = await resp.json();
-        var text = data.content[0].text;
-        var json = text.match(/\{[\s\S]*\}/);
-        if (!json) throw new Error('Could not parse response');
-
-        currentLead = JSON.parse(json[0]);
+        currentLead = parsed.value;
         renderLead(currentLead);
+        openReview();
       } catch(e) {
         alert('Error: ' + e.message);
       }
