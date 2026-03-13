@@ -165,6 +165,7 @@
     </footer>
   </div>
 
+  <script src="../shared/ai.js"></script>
   <script>
     let originalImage = null;
     let pins = { booth: [], entrance: [], anchor: [] };
@@ -322,17 +323,16 @@
 
       try {
         pf.style.width = '70%';
-        const resp = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-          body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2048, messages: [{ role: 'user', content: [
+        const data = await window.LensmorAI.callAnthropic({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 2048,
+          messages: [{ role: 'user', content: [
             { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: annotatedBase64 } },
             { type: 'text', text: prompt }
-          ]}]})
+          ]}],
+          apiKey: apiKey
         });
-        if (!resp.ok) { const err = await resp.json(); throw new Error(err.error?.message || 'API error'); }
-        const data = await resp.json();
-        const json = data.content[0].text.match(/\{[\s\S]*\}/);
+        const json = window.LensmorAI.extractText(data).match(/\{[\s\S]*\}/);
         if (!json) throw new Error('Could not parse');
         analysisResult = JSON.parse(json[0]);
         pf.style.width = '100%';

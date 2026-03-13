@@ -187,6 +187,7 @@
     </footer>
   </div>
 
+  <script src="../shared/ai.js"></script>
   <script>
     var csvData = [], csvHeaders = [], allMessages = [];
 
@@ -317,16 +318,13 @@
           'Respond with ONLY a JSON array. Each element:\n{\n  "name": "contact name",\n  "company": "company name",\n  "email_subject": "subject line",\n  "email_body": "full email body",\n  "linkedin_msg": "short LinkedIn message",\n  "priority": "hot/warm/cold based on available signals"\n}\n\nJSON only, no markdown.';
 
         try {
-          var resp = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-            body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 4096, messages: [{ role: 'user', content: prompt }] })
+          var data = await window.LensmorAI.callAnthropic({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 4096,
+            messages: [{ role: 'user', content: prompt }],
+            apiKey: apiKey
           });
-
-          if (!resp.ok) { var err = await resp.json(); throw new Error(err.error?.message || 'API error'); }
-
-          var data = await resp.json();
-          var text = data.content[0].text;
+          var text = window.LensmorAI.extractText(data);
           var jsonMatch = text.match(/\[[\s\S]*\]/);
           if (jsonMatch) {
             var msgs = JSON.parse(jsonMatch[0]);
