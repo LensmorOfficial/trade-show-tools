@@ -10,11 +10,17 @@
 [![Last Commit](https://img.shields.io/github/last-commit/LensmorOfficial/trade-show-tools?style=flat)](https://github.com/LensmorOfficial/trade-show-tools/commits/main)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+**9 free AI-powered tools for B2B trade show teams.** Qualify leads from badge photos, score exhibitor lists against your ICP, extract booth maps into lead lists, and calculate ROI — all in the browser. No signup. No backend. Bring your own API key.
+
+**[Open the tools →](https://lensmorofficial.github.io/trade-show-tools/)** | Built by [Lensmor](https://www.lensmor.com/?utm_source=github&utm_medium=readme&utm_campaign=trade-show-tools)
+
 **If you find these tools useful, please star this repo — it helps others discover them.**
 
-> Free online tools for trade show planning, budgeting, and ROI measurement. No signup required.
+## Preview
 
-**[Use the tools](https://lensmorofficial.github.io/trade-show-tools/)** | Built by [Lensmor](https://www.lensmor.com/?utm_source=github&utm_medium=readme&utm_campaign=trade-show-tools)
+> [**Open Live Tools →**](https://lensmorofficial.github.io/trade-show-tools/)
+
+<!-- Screenshots: ROI Calculator | ICP Matcher | Badge Qualifier -->
 
 ## Available Tools
 
