@@ -18,9 +18,11 @@
 
 ## Preview
 
-> [**Open Live Tools →**](https://lensmorofficial.github.io/trade-show-tools/)
+[![Trade Show Tools Homepage](screenshots/tools-homepage.png)](https://lensmorofficial.github.io/trade-show-tools/)
 
-<!-- Screenshots: ROI Calculator | ICP Matcher | Badge Qualifier -->
+| ROI Calculator | ICP Matcher | Badge Qualifier |
+|---|---|---|
+| [![ROI Calculator](screenshots/roi-calculator.png)](https://lensmorofficial.github.io/trade-show-tools/roi-calculator/) | [![ICP Matcher](screenshots/icp-matcher.png)](https://lensmorofficial.github.io/trade-show-tools/icp-matcher/) | [![Badge Qualifier](screenshots/badge-qualifier.png)](https://lensmorofficial.github.io/trade-show-tools/badge-qualifier/) |
 
 ## Available Tools
 
