@@ -1,4 +1,7 @@
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
+// Optional self-hosted proxy. NOT used in the default GitHub Pages deployment (tools call Anthropic directly).
+// Requires ALLOWED_ORIGIN env var set to your exact domain (e.g. https://lensmorofficial.github.io). Wildcard is disallowed.
+// The caller must supply apiKey in the request body — no server-side API key fallback is supported.
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN;
 
 function setCors(res) {
   res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
@@ -7,6 +10,11 @@ function setCors(res) {
 }
 
 module.exports = async function handler(req, res) {
+  if (!ALLOWED_ORIGIN) {
+    res.statusCode = 500;
+    res.end(JSON.stringify({ error: 'Proxy is not configured: set ALLOWED_ORIGIN env var to your deployment domain.' }));
+    return;
+  }
   setCors(res);
   if (req.method === 'OPTIONS') {
     res.statusCode = 204;
@@ -32,10 +40,10 @@ module.exports = async function handler(req, res) {
     try { body = JSON.parse(body); } catch (e) { body = {}; }
   }
 
-  const apiKey = body.apiKey || process.env.ANTHROPIC_API_KEY;
+  const apiKey = body.apiKey; // Caller must supply key — no server-side env fallback
   if (!apiKey) {
     res.statusCode = 400;
-    res.end(JSON.stringify({ error: 'Missing API key' }));
+    res.end(JSON.stringify({ error: 'Missing apiKey in request body' }));
     return;
   }
 

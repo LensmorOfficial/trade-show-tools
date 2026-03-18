@@ -120,7 +120,11 @@
         <div class="form-row">
           <label>Anthropic API Key</label>
           <input type="password" id="apiKey" placeholder="sk-ant-...">
-          <div class="key-note">Stored locally. <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--primary)">Get one</a></div>
+          <div style="display:flex;align-items:center;gap:.5rem;margin-top:.4rem">
+            <input type="checkbox" id="rememberKey" style="accent-color:var(--primary)">
+            <label for="rememberKey" style="font-size:.75rem;color:var(--text-dim);margin:0;font-weight:400;">Remember API key on this device</label>
+          </div>
+          <div class="key-note"><a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--primary)">Get one</a></div>
         </div>
         <div class="form-row">
           <label>Show Name (optional)</label>
@@ -202,10 +206,16 @@
     // Load saved API key
     try {
       const k = localStorage.getItem('fp-api-key');
-      if (k) document.getElementById('apiKey').value = k;
+      if (k) { document.getElementById('apiKey').value = k; document.getElementById('rememberKey').checked = true; }
     } catch(e) {}
     document.getElementById('apiKey').addEventListener('change', function() {
-      try { localStorage.setItem('fp-api-key', this.value); } catch(e) {}
+      if (document.getElementById('rememberKey').checked) {
+        try { localStorage.setItem('fp-api-key', this.value); } catch(e) {}
+      }
+    });
+    document.getElementById('rememberKey').addEventListener('change', function() {
+      if (!this.checked) { try { localStorage.removeItem('fp-api-key'); } catch(e) {} }
+      else if (document.getElementById('apiKey').value) { try { localStorage.setItem('fp-api-key', document.getElementById('apiKey').value); } catch(e) {} }
     });
 
     // File handling

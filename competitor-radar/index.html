@@ -108,7 +108,11 @@
       <div class="form-row">
         <label>API Key</label>
         <input type="password" id="apiKey" placeholder="sk-ant-...">
-        <div class="key-note"><a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--primary)">Get one</a> &middot; Stored locally only</div>
+        <div style="display:flex;align-items:center;gap:.5rem;margin-top:.4rem">
+          <input type="checkbox" id="rememberKey" style="accent-color:var(--primary)">
+          <label for="rememberKey" style="font-size:.75rem;color:var(--text-dim);margin:0;font-weight:400;">Remember API key on this device</label>
+        </div>
+        <div class="key-note"><a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--primary)">Get one</a></div>
       </div>
       <div class="form-row">
         <label>Show Name</label>
@@ -199,7 +203,7 @@
 
     // Load state
     try {
-      const k = localStorage.getItem('cr-api-key'); if (k) document.getElementById('apiKey').value = k;
+      const k = localStorage.getItem('cr-api-key'); if (k) { document.getElementById('apiKey').value = k; document.getElementById('rememberKey').checked = true; }
       const sn = localStorage.getItem('cr-show'); if (sn) document.getElementById('showName').value = sn;
       const ctx = localStorage.getItem('cr-context'); if (ctx) document.getElementById('yourContext').value = ctx;
       const wl = localStorage.getItem('cr-watchlist'); if (wl) watchlist = JSON.parse(wl);
@@ -208,7 +212,11 @@
 
     function saveData() {
       try {
-        localStorage.setItem('cr-api-key', document.getElementById('apiKey').value);
+        if (document.getElementById('rememberKey').checked) {
+          localStorage.setItem('cr-api-key', document.getElementById('apiKey').value);
+        } else {
+          localStorage.removeItem('cr-api-key');
+        }
         localStorage.setItem('cr-show', document.getElementById('showName').value);
         localStorage.setItem('cr-context', document.getElementById('yourContext').value);
         localStorage.setItem('cr-watchlist', JSON.stringify(watchlist));
@@ -217,6 +225,10 @@
     }
 
     document.querySelectorAll('#apiKey,#showName,#yourContext').forEach(el => el.addEventListener('change', saveData));
+    document.getElementById('rememberKey').addEventListener('change', function() {
+      if (!this.checked) { try { localStorage.removeItem('cr-api-key'); } catch(e) {} }
+      else if (document.getElementById('apiKey').value) saveData();
+    });
 
     // Watchlist
     function renderWatchlist() {

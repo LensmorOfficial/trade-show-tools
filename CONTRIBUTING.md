@@ -46,14 +46,14 @@ Keep PRs focused. One tool or fix per PR.
 
 - All AI-powered tools use the Anthropic API (not OpenAI)
 - The API key is entered by the user in the UI and stored only in `localStorage` if the user opts in
-- The key is never sent anywhere except directly to `api.anthropic.com`
+- By default, the key is sent directly from your browser to `api.anthropic.com` — it does not pass through any intermediate server in the default GitHub Pages deployment
 - Include a note near the API key input with a link to `console.anthropic.com/settings/keys` and an estimate of typical cost
 - Use `claude-sonnet-4-20250514` as the default model unless there is a specific reason to use another
 
-**No backend**
+**Backend / proxy**
 
-- Tools must work entirely in the browser
-- No server-side code, no proxies, no databases
+- Tools must work entirely in the browser by default — no required backend
+- The repository includes an optional self-hosted proxy (`api/anthropic.js`) for teams that want to route AI calls through their own server. If used, it must be configured with an explicit `ALLOWED_ORIGIN` env var (wildcard `*` is not permitted), and callers must supply the API key in the request body — no server-side key storage is allowed
 - Data processing happens client-side; results exist only in the user's browser session
 
 **Style**

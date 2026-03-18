@@ -114,7 +114,11 @@
       <div class="form-row">
         <label>Anthropic API Key</label>
         <input type="password" id="apiKey" placeholder="sk-ant-...">
-        <div class="key-note">Stored locally. <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--primary)">Get one</a> &middot; ~$0.03 per 10 personalized emails</div>
+        <div style="display:flex;align-items:center;gap:.5rem;margin-top:.4rem">
+          <input type="checkbox" id="rememberKey" style="accent-color:var(--primary)">
+          <label for="rememberKey" style="font-size:.75rem;color:var(--text-dim);margin:0;font-weight:400;">Remember API key on this device</label>
+        </div>
+        <div class="key-note"><a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--primary)">Get one</a> &middot; ~$0.03 per 10 personalized emails</div>
       </div>
     </div>
 
@@ -187,19 +191,25 @@
     </footer>
   </div>
 
+  <script src="../shared/csv.js"></script>
   <script src="../shared/ai.js"></script>
   <script>
     var csvData = [], csvHeaders = [], allMessages = [];
 
     try {
-      var k = localStorage.getItem('outreach-api-key'); if (k) document.getElementById('apiKey').value = k;
+      var k = localStorage.getItem('outreach-api-key');
+      if (k) { document.getElementById('apiKey').value = k; document.getElementById('rememberKey').checked = true; }
       var ctx = localStorage.getItem('outreach-context');
       if (ctx) { var c = JSON.parse(ctx); ['showName','yourCompany','yourProduct','senderInfo','tone'].forEach(function(f) { if (c[f]) document.getElementById(f).value = c[f]; }); }
     } catch(e) {}
 
     function saveContext() {
       try {
-        localStorage.setItem('outreach-api-key', document.getElementById('apiKey').value);
+        if (document.getElementById('rememberKey').checked) {
+          localStorage.setItem('outreach-api-key', document.getElementById('apiKey').value);
+        } else {
+          localStorage.removeItem('outreach-api-key');
+        }
         localStorage.setItem('outreach-context', JSON.stringify({
           showName: document.getElementById('showName').value, yourCompany: document.getElementById('yourCompany').value,
           yourProduct: document.getElementById('yourProduct').value, senderInfo: document.getElementById('senderInfo').value,
@@ -209,6 +219,10 @@
     }
 
     document.querySelectorAll('input,textarea,select').forEach(function(el) { el.addEventListener('change', saveContext); });
+    document.getElementById('rememberKey').addEventListener('change', function() {
+      if (!this.checked) { try { localStorage.removeItem('outreach-api-key'); } catch(e) {} }
+      else if (document.getElementById('apiKey').value) saveContext();
+    });
 
     // CSV handling (reuse pattern from ICP matcher)
     var dz = document.getElementById('dropZone');
@@ -216,16 +230,13 @@
     dz.addEventListener('drop', function(e) { e.preventDefault(); handleFile(e.dataTransfer.files[0]); });
     document.getElementById('fileInput').addEventListener('change', function() { if (this.files[0]) handleFile(this.files[0]); });
 
-    function parseCSVLine(line) { var r=[],c='',q=false; for(var i=0;i<line.length;i++){var ch=line[i]; if(ch==='"')q=!q; else if(ch===','&&!q){r.push(c.trim());c='';} else c+=ch;} r.push(c.trim()); return r; }
-
     function handleFile(file) {
       if (!file) return;
       var reader = new FileReader();
       reader.onload = function(e) {
-        var lines = e.target.result.split(/\r?\n/).filter(function(l){return l.trim();});
-        csvHeaders = parseCSVLine(lines[0]);
-        csvData = [];
-        for (var i=1; i<lines.length; i++) { var v=parseCSVLine(lines[i]); if(v.length>=2) csvData.push(v); }
+        var parsed = window.LensmorCSV.parse(e.target.result);
+        csvHeaders = parsed.headers;
+        csvData = parsed.rows;
 
         dz.classList.add('has-file');
         dz.querySelector('.dz-text').textContent = file.name + ' (' + csvData.length + ' leads)';

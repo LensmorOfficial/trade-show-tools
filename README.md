@@ -11,7 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Tools](https://img.shields.io/badge/Tools-9-brightgreen?style=flat)](https://lensmorofficial.github.io/trade-show-tools/)
 
-**9 free AI-powered tools for B2B trade show teams.** No signup. No backend. Works in browser.
+**9 free AI-powered tools for B2B trade show teams.** No signup. No required backend. Works in browser.
 
 **[Open the tools →](https://lensmorofficial.github.io/trade-show-tools/)** | Built by [Lensmor](https://www.lensmor.com/?utm_source=github&utm_medium=readme&utm_campaign=trade-show-tools)
 
@@ -57,7 +57,7 @@ Trade show teams waste hours on tasks that should take minutes: manually scoring
 
 **No-AI tools** (ROI Calculator, Budget Planner, Checklist Generator) — open and use immediately, no setup.
 
-**AI tools** — get a free Anthropic API key at [console.anthropic.com](https://console.anthropic.com/), paste it in the tool, and you're ready. Keys are stored locally in your browser and never sent to our servers.
+**AI tools** — get a free Anthropic API key at [console.anthropic.com](https://console.anthropic.com/), paste it in the tool, and you're ready. Keys are stored locally in your browser. The default hosted version calls Anthropic directly — your key never touches our servers. (Teams self-hosting the optional proxy are responsible for their own data handling.)
 
 ---
 

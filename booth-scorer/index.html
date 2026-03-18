@@ -105,6 +105,10 @@
         <div class="form-row">
           <label>API Key</label>
           <input type="password" id="apiKey" placeholder="sk-ant-...">
+          <div style="display:flex;align-items:center;gap:.5rem;margin-top:.4rem">
+            <input type="checkbox" id="rememberKey" style="accent-color:var(--primary)">
+            <label for="rememberKey" style="font-size:.75rem;color:var(--text-dim);margin:0;font-weight:400;">Remember API key on this device</label>
+          </div>
         </div>
         <div class="form-row">
           <label>Show Name</label>
@@ -175,10 +179,16 @@
 
     // Load state
     try {
-      const k = localStorage.getItem('bs-api-key'); if (k) document.getElementById('apiKey').value = k;
+      const k = localStorage.getItem('bs-api-key'); if (k) { document.getElementById('apiKey').value = k; document.getElementById('rememberKey').checked = true; }
     } catch(e) {}
     document.getElementById('apiKey').addEventListener('change', function() {
-      try { localStorage.setItem('bs-api-key', this.value); } catch(e) {}
+      if (document.getElementById('rememberKey').checked) {
+        try { localStorage.setItem('bs-api-key', this.value); } catch(e) {}
+      }
+    });
+    document.getElementById('rememberKey').addEventListener('change', function() {
+      if (!this.checked) { try { localStorage.removeItem('bs-api-key'); } catch(e) {} }
+      else if (document.getElementById('apiKey').value) { try { localStorage.setItem('bs-api-key', document.getElementById('apiKey').value); } catch(e) {} }
     });
 
     // File
