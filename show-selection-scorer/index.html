@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trade Show Selection Scorer — Score & Compare Shows</title>
+  <meta name="description" content="Score and compare trade shows across 6 dimensions. Get a data-driven recommendation on which shows deserve your budget.">
+  <meta name="keywords" content="trade show selection, exhibit scoring, show comparison, trade show evaluation">
+  <link rel="canonical" href="https://lensmorofficial.github.io/trade-show-tools/show-selection-scorer/">
+  <meta property="og:title" content="Trade Show Selection Scorer — Score & Compare Shows">
+  <meta property="og:description" content="Score trade shows across 6 dimensions. Get data-driven recommendations.">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Trade Show Selection Scorer",
+    "description": "Score and compare trade shows across 6 dimensions.",
+    "url": "https://lensmorofficial.github.io/trade-show-tools/show-selection-scorer/",
+    "applicationCategory": "BusinessApplication",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6b75ff;
+      --primary-hover: #8189ff;
+      --green: #34d399;
+      --amber: #fbbf24;
+      --red: #f87171;
+      --bg: #0c0c12;
+      --bg-card: #1a1a24;
+      --bg-input: #0c0c12;
+      --stroke: #1f2033;
+      --text: #ffffff;
+      --text-secondary: #a7a7a8;
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter Tight', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-secondary);
+    }
+
+    .dimensions-help {
+      background: var(--bg-card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .dimensions-help h3 {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .dimensions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .dimension-item {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .dimension-item strong {
+      color: var(--text);
+    }
+
+    .shows-container {
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .show-card {
+      background: var(--bg-card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+    }
+
+    .show-header {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      align-items: center;
+    }
+
+    .show-header input {
+      flex: 1;
+      background: var(--bg-input);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      padding: 0.625rem 0.875rem;
+      color: var(--text);
+      font-size: 0.9375rem;
+    }
+
+    .show-header input::placeholder {
+      color: #6b6b6c;
+    }
+
+    .remove-btn {
+      background: transparent;
+      border: 1px solid var(--stroke);
+      color: var(--text-secondary);
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.8125rem;
+    }
+
+    .remove-btn:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .scores-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .score-input {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .score-input label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .score-input input[type="range"] {
+      width: 100%;
+      accent-color: var(--primary);
+    }
+
+    .score-value {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .add-show-btn {
+      width: 100%;
+      background: transparent;
+      border: 2px dashed var(--stroke);
+      color: var(--text-secondary);
+      padding: 1rem;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      font-size: 0.9375rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .add-show-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .results {
+      background: var(--bg-card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+    }
+
+    .results h2 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .ranking-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .ranking-table th,
+    .ranking-table td {
+      text-align: left;
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--stroke);
+    }
+
+    .ranking-table th {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .ranking-table td {
+      font-size: 0.875rem;
+    }
+
+    .total-score {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .recommendation {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .rec-priority {
+      background: rgba(52, 211, 153, 0.2);
+      color: var(--green);
+    }
+
+    .rec-consider {
+      background: rgba(251, 191, 36, 0.2);
+      color: var(--amber);
+    }
+
+    .rec-skip {
+      background: rgba(248, 113, 113, 0.2);
+      color: var(--red);
+    }
+
+    .export-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+
+    .export-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    @media (max-width: 640px) {
+      .scores-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Show Selection Scorer</h1>
+      <p>Score and compare trade shows across 6 dimensions. Get data-driven recommendations.</p>
+    </header>
+
+    <div class="dimensions-help">
+      <h3>Scoring Dimensions (1-10)</h3>
+      <div class="dimensions-grid">
+        <div class="dimension-item">
+          <strong>Audience Fit</strong> — How well does attendee profile match your ICP?
+        </div>
+        <div class="dimension-item">
+          <strong>Exhibitor Quality</strong> — Quality of other exhibitors (partners + competitors)
+        </div>
+        <div class="dimension-item">
+          <strong>Location/Access</strong> — Ease of travel, venue quality, logistics
+        </div>
+        <div class="dimension-item">
+          <strong>Timing</strong> — Alignment with your product cycles and sales calendar
+        </div>
+        <div class="dimension-item">
+          <strong>Budget Fit</strong> — Cost vs. your available budget
+        </div>
+        <div class="dimension-item">
+          <strong>Strategic Value</strong> — Brand presence, market entry, partnerships
+        </div>
+      </div>
+    </div>
+
+    <div class="shows-container" id="showsContainer"></div>
+
+    <button class="add-show-btn" onclick="addShow()">+ Add Another Show</button>
+
+    <div class="results">
+      <h2>Recommendation</h2>
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Show</th>
+            <th>Total Score</th>
+            <th>Recommendation</th>
+          </tr>
+        </thead>
+        <tbody id="rankingBody"></tbody>
+      </table>
+      <button class="export-btn" onclick="exportResults()">Export Results (CSV)</button>
+    </div>
+  </div>
+
+  <script>
+    let shows = [
+      { name: '', audience: 5, exhibitors: 5, location: 5, timing: 5, budget: 5, strategic: 5 },
+      { name: '', audience: 5, exhibitors: 5, location: 5, timing: 5, budget: 5, strategic: 5 }
+    ];
+
+    function render() {
+      const container = document.getElementById('showsContainer');
+      container.innerHTML = shows.map((show, i) => `
+        <div class="show-card">
+          <div class="show-header">
+            <input type="text" placeholder="Show name (e.g., MEDICA 2026)" 
+                   value="${show.name}" oninput="updateName(${i}, this.value)">
+            ${shows.length > 1 ? `<button class="remove-btn" onclick="removeShow(${i})">Remove</button>` : ''}
+          </div>
+          <div class="scores-grid">
+            ${['audience', 'exhibitors', 'location', 'timing', 'budget', 'strategic'].map(dim => `
+              <div class="score-input">
+                <label>${dim.charAt(0).toUpperCase() + dim.slice(1)}</label>
+                <input type="range" min="1" max="10" value="${show[dim]}" 
+                       oninput="updateScore(${i}, '${dim}', this.value)">
+                <span class="score-value">${show[dim]}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      updateRanking();
+    }
+
+    function updateName(i, val) {
+      shows[i].name = val;
+      updateRanking();
+    }
+
+    function updateScore(i, dim, val) {
+      shows[i][dim] = parseInt(val);
+      render();
+    }
+
+    function addShow() {
+      shows.push({ name: '', audience: 5, exhibitors: 5, location: 5, timing: 5, budget: 5, strategic: 5 });
+      render();
+    }
+
+    function removeShow(i) {
+      shows.splice(i, 1);
+      render();
+    }
+
+    function calculateTotal(show) {
+      return show.audience + show.exhibitors + show.location + show.timing + show.budget + show.strategic;
+    }
+
+    function getRecommendation(total) {
+      if (total >= 48) return { text: 'Priority', class: 'rec-priority' };
+      if (total >= 36) return { text: 'Consider', class: 'rec-consider' };
+      return { text: 'Skip', class: 'rec-skip' };
+    }
+
+    function updateRanking() {
+      const ranked = shows
+        .map((s, i) => ({ ...s, total: calculateTotal(s), index: i }))
+        .filter(s => s.name.trim())
+        .sort((a, b) => b.total - a.total);
+
+      document.getElementById('rankingBody').innerHTML = ranked.map((s, rank) => {
+        const rec = getRecommendation(s.total);
+        return `
+          <tr>
+            <td>${rank + 1}</td>
+            <td>${s.name}</td>
+            <td class="total-score">${s.total}/60</td>
+            <td><span class="recommendation ${rec.class}">${rec.text}</span></td>
+          </tr>
+        `;
+      }).join('') || '<tr><td colspan="4" style="text-align:center;color:#6b6b6c;">Enter show names to see recommendations</td></tr>';
+    }
+
+    function exportResults() {
+      const csv = [
+        'Show,Audience Fit,Exhibitor Quality,Location,Timing,Budget Fit,Strategic Value,Total,Recommendation',
+        ...shows.filter(s => s.name.trim()).map(s => {
+          const total = calculateTotal(s);
+          const rec = getRecommendation(total).text;
+          return `${s.name},${s.audience},${s.exhibitors},${s.location},${s.timing},${s.budget},${s.strategic},${total},${rec}`;
+        })
+      ].join('\n');
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'show-selection-scores.csv';
+      a.click();
+    }
+
+    render();
+  </script>
+</body>
+</html>
