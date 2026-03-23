@@ -9,9 +9,9 @@
 [![Stars](https://img.shields.io/github/stars/LensmorOfficial/trade-show-tools?style=flat)](https://github.com/LensmorOfficial/trade-show-tools/stargazers)
 [![Last Commit](https://img.shields.io/github/last-commit/LensmorOfficial/trade-show-tools?style=flat)](https://github.com/LensmorOfficial/trade-show-tools/commits/main)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Tools](https://img.shields.io/badge/Tools-9-brightgreen?style=flat)](https://lensmorofficial.github.io/trade-show-tools/)
+[![Tools](https://img.shields.io/badge/Tools-10-brightgreen?style=flat)](https://lensmorofficial.github.io/trade-show-tools/)
 
-**9 free AI-powered tools for B2B trade show teams.** No signup. No required backend. Works in browser.
+**10 free tools for B2B trade show teams.** No signup. No required backend. Works in browser.
 
 **[Open the tools →](https://lensmorofficial.github.io/trade-show-tools/)** | Built by [Lensmor](https://www.lensmor.com/?utm_source=github&utm_medium=readme&utm_campaign=trade-show-tools)
 
@@ -50,12 +50,13 @@ Trade show teams waste hours on tasks that should take minutes: manually scoring
 | [Floor Plan Extractor](https://lensmorofficial.github.io/trade-show-tools/floorplan-extractor/) | Upload floor plan image/PDF → extract all booth numbers and companies into a CRM-ready lead list | BYOK |
 | [Competitor Radar](https://lensmorofficial.github.io/trade-show-tools/competitor-radar/) | Log competitor booth photos + voice notes on the show floor → auto-generate competitive battlecard | BYOK |
 | [Booth Location Scorer](https://lensmorofficial.github.io/trade-show-tools/booth-scorer/) | Mark your booth on a floor plan → get an AI grade (A–F) with foot traffic analysis and positioning tips | BYOK |
+| [Show Selection Scorer](https://lensmorofficial.github.io/trade-show-tools/show-selection-scorer/) | Score shows across 6 dimensions (audience fit, timing, budget, etc.) → get Priority / Consider / Skip with CSV export | None |
 
 ---
 
 ## Quick Start
 
-**No-AI tools** (ROI Calculator, Budget Planner, Checklist Generator) — open and use immediately, no setup.
+**No-AI tools** (ROI Calculator, Budget Planner, Checklist Generator, Show Selection Scorer) — open and use immediately, no setup.
 
 **AI tools** — get a free Anthropic API key at [console.anthropic.com](https://console.anthropic.com/), paste it in the tool, and you're ready. Keys are stored locally in your browser. The default hosted version calls Anthropic directly — your key never touches our servers. (Teams self-hosting the optional proxy are responsible for their own data handling.)
 
