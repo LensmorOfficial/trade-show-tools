@@ -89,7 +89,7 @@ Any tool can be embedded via iframe:
 
 ## About Lensmor
 
-[Lensmor](https://www.lensmor.com/?utm_source=github&utm_medium=readme&utm_campaign=trade-show-tools) is an AI-native event intelligence platform that helps B2B teams discover trade shows, analyze exhibitor lists (uncovering [hidden competitors](https://www.lensmor.com/blog/hidden-competitors-trade-shows?utm_source=github&utm_medium=readme&utm_campaign=trade-show-tools)), and generate [qualified leads](https://www.lensmor.com/blog/trade-show-lead-capture?utm_source=github&utm_medium=readme&utm_campaign=trade-show-tools) before the event starts.
+[Lensmor](https://www.lensmor.com/?utm_source=github&utm_medium=readme&utm_campaign=trade-show-tools) is an AI-native event intelligence platform that helps B2B teams discover trade shows, analyze exhibitor lists, and generate [qualified leads](https://www.lensmor.com/blog/trade-show-lead-capture?utm_source=github&utm_medium=readme&utm_campaign=trade-show-tools) before the event starts.
 
 ---
 
